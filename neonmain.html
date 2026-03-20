@@ -1,3201 +1,395 @@
 <!DOCTYPE html>
-<html lang="ko">
-
+<html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NEON MU Launcher</title>
-
-
-
-
-<style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MU Online - Server Info</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
-
-        :root {
-            --bg: #04050a;
-            --panel: rgba(12, 14, 24, 0.74);
-            --panel-strong: rgba(10, 12, 20, 0.88);
-            --text: #f5f2f8;
-            --muted: #bcb4c6;
-            --red: #ff5a36;
-            --red-2: #ff3d2e;
-            --purple: #8b5cf6;
-            --purple-2: #6d48ff;
-            --green: #57e389;
-            --warning: #ffbf47;
-            --shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
-        }
-
-        html,
+        
         body {
-            background: #000;
-            font-family: "Segoe UI", "Noto Sans KR", Arial, sans-serif;
-            color: var(--text);
-        }
-
-        .launcher {
-            width: 800px;
-            height: 480px;
-            display: flex;
-            position: relative;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+            color: #ffffff;
             overflow: hidden;
-            background-image:
-                linear-gradient(90deg,
-                    rgba(4, 5, 10, 0.96) 0%,
-                    rgba(9, 8, 14, 0.82) 18%,
-                    rgba(18, 10, 10, 0.52) 40%,
-                    rgba(10, 8, 14, 0.22) 58%,
-                    rgba(4, 5, 10, 0.72) 100%),
-                radial-gradient(circle at 24% 16%, rgba(255, 90, 54, 0.18), transparent 28%),
-                url("실험5.png");
-            background-size: cover;
-            background-position: center center;
-            background-repeat: no-repeat;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.38);
         }
-
-        .launcher::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            background:
-                linear-gradient(180deg,
-                    rgba(255, 60, 40, 0.03),
-                    transparent 26%,
-                    transparent 72%,
-                    rgba(109, 72, 255, 0.04)),
-                linear-gradient(90deg,
-                    rgba(255, 60, 40, 0.00) 0%,
-                    rgba(255, 60, 40, 0.00) 72%,
-                    rgba(255, 60, 40, 0.04) 86%,
-                    rgba(255, 60, 40, 0.00) 100%);
-        }
-
-        .launcher::after {
-            content: "";
-            position: absolute;
-            right: 54px;
-            top: 72px;
-            width: 280px;
-            height: 2px;
-            background: linear-gradient(90deg,
-                    rgba(255, 70, 45, 0),
-                    rgba(255, 70, 45, 0.75),
-                    rgba(255, 70, 45, 0));
-            box-shadow:
-                0 0 8px rgba(255, 70, 45, 0.20),
-                0 0 18px rgba(255, 70, 45, 0.14);
-            opacity: 0.42;
-            transform: rotate(-2deg);
-            pointer-events: none;
-        }
-
-        .sidebar {
-            width: 60px;
-            min-width: 60px;
-            height: 100%;
-            background: linear-gradient(180deg, rgba(5, 7, 15, 0.98), rgba(7, 10, 22, 0.95));
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 14px 0 10px;
-            position: relative;
-            z-index: 2;
-            box-shadow: 12px 0 26px rgba(0, 0, 0, 0.22);
-        }
-
-        .sidebar::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 1px;
-            height: 100%;
-            background: linear-gradient(180deg,
-                    rgba(255, 88, 54, 0.34),
-                    rgba(255, 88, 54, 0.16),
-                    rgba(109, 72, 255, 0.08));
-            box-shadow:
-                0 0 6px rgba(255, 88, 54, 0.18),
-                0 0 14px rgba(255, 88, 54, 0.10);
-            pointer-events: none;
-        }
-
-        .nav-icon {
-            width: 21px;
-            height: 21px;
-            object-fit: contain;
-            opacity: 0.75;
-            transition: 0.2s;
-        }
-
-        .nav-btn:hover .nav-icon,
-        .nav-btn.active .nav-icon {
-            opacity: 1;
-            transform: scale(1.05);
-            filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.6));
-        }
-
-        .logo-wrap {
+        
+        .launcher-container {
             width: 100%;
-            padding: 0 0 14px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex: 0 0 auto;
-        }
-
-        .logo {
-            width: 34px;
-            height: 34px;
-            border-radius: 11px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-            background:
-                radial-gradient(circle at 30% 30%, rgba(255, 210, 185, 0.18), transparent 30%),
-                linear-gradient(135deg, rgba(255, 88, 54, 0.28), rgba(109, 72, 255, 0.16));
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.08),
-                0 8px 18px rgba(0, 0, 0, 0.22),
-                0 0 10px rgba(255, 88, 54, 0.10);
-            flex-shrink: 0;
-        }
-
-        .logo::before {
-            content: "N";
-            display: block;
-            font-size: 19px;
-            font-weight: 900;
-            line-height: 1;
-            color: #fff;
-            text-shadow: 0 0 8px rgba(255, 120, 72, 0.16);
-            transform: skewX(-8deg);
-        }
-
-        .nav {
-            margin-top: 6px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            width: 100%;
-            flex: 1;
-        }
-
-        .nav-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 13px;
-            border: 1px solid transparent;
+            height: 100vh;
+            padding: 5px;
             display: grid;
-            place-items: center;
-            color: rgba(216, 220, 241, 0.82);
-            background: transparent;
-            font-size: 16px;
-            cursor: pointer;
-            transition: 0.2s ease;
-        }
-
-        .nav-btn:hover,
-        .nav-btn.active {
-            color: #ffffff;
-            background: linear-gradient(135deg, rgba(255, 88, 54, 0.10), rgba(109, 72, 255, 0.12));
-            border-color: rgba(255, 255, 255, 0.08);
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.03),
-                0 0 0 1px rgba(255, 88, 54, 0.05);
-            transform: translateY(-1px);
-        }
-
-        .sidebar-bottom {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            padding-bottom: 2px;
-        }
-
-        .main {
-            flex: 1;
-            height: 100%;
-            width: 740px;
-            max-width: 740px;
-            padding: 16px 18px 72px 16px;
-            position: relative;
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            min-width: 0;
-            overflow: hidden;
-        }
-
-        /* 홈 title - 카드 여백 */
-        #page-home .content-grid {
-            margin-top: 30px;
-        }
-
-        /*정렬*/
-        .topbar {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 6px;
-            margin-bottom: 6px;
-        }
-
-        /*높이*/
-        .status-chip {
-            height: 30px;
-            padding: 0 12px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            border-radius: 10px;
-
-            background: rgba(18, 20, 30, 0.78);
-
-            border: 1px solid rgba(255, 255, 255, 0.08);
-
-            
-
-            color: #edf1ff;
-            font-size: 12px;
-
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.05),
-                0 8px 18px rgba(0, 0, 0, 0.18);
-        }
-
-        .status-chip strong {
-            color: #ffffff;
-            letter-spacing: 0.02em;
-        }
-
-        .dot {
-            width: 7px;
-            height: 7px;
-            border-radius: 50%;
-            background: #57e389;
-
-            box-shadow:
-                0 0 6px rgba(87, 227, 137, 0.8),
-                0 0 12px rgba(87, 227, 137, 0.5);
-
-            animation: onlinePulse 2.2s infinite;
-        }
-
-        @keyframes onlinePulse {
-            0% {
-                transform: scale(1);
-                box-shadow:
-                    0 0 6px rgba(87, 227, 137, 0.7),
-                    0 0 12px rgba(87, 227, 137, 0.45);
-            }
-
-            50% {
-                transform: scale(1.12);
-                box-shadow:
-                    0 0 10px rgba(87, 227, 137, 1),
-                    0 0 22px rgba(87, 227, 137, 0.75);
-            }
-
-            100% {
-                transform: scale(1);
-                box-shadow:
-                    0 0 6px rgba(87, 227, 137, 0.7),
-                    0 0 12px rgba(87, 227, 137, 0.45);
-            }
-        }
-
-        .alert-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--warning);
-            box-shadow: 0 0 10px rgba(255, 191, 71, 0.5);
-        }
-
-        .hero {
-            width: 100%;
-            max-width: 100%;
-            display: block;
-            margin-top: -6px;
-        }
-
-        .brand {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 10px;
-            margin-bottom: 14px;
-        }
-
-
-        /* N E O N 로고*/
-
-        .neon-logo {
-            margin-top: -30px;
-            margin-bottom: 8px;
-            display: inline-block;
-            padding: 2px 0;
-            filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.28));
-            background: rgba(0, 0, 0, 0.12);
-            border-radius: 6px;
-            padding: 2px 6px 4px 0;
-        }
-
-        .brand-logo {
-            font-family: Georgia, 'Times New Roman', serif;
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: 0.04em;
-            line-height: 1;
-            color: #ffd6d6;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75), 0 0 8px rgba(255, 70, 70, 0.35);
-        }
-
-        .brand-logo span {
-            color: #ffb4b4;
-            display: inline-block;
-        }
-
-
-        /* 제목 타이포*/
-        .headline {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 16px;
-            line-height: 1;
-        }
-
-        .main-text {
-            transform: translateY(5px);
-            font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-            font-size: 31px;
-            font-weight: 700;
-            letter-spacing: -0.04em;
-            line-height: 1.1;
-            display: block;
-            margin-bottom: 2px;
-            color: #e6cfba;
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85), 0 2px 8px rgba(0, 0, 0, 0.45);
-        }
-
-
-        .sub-text {
-            transform: translateY(5px);
-            font-family: Georgia, 'Times New Roman', serif;
-            font-size: 18px;
-            font-weight: 700;
-            letter-spacing: 0.06em;
-            line-height: 1.05;
-            display: block;
-            color: rgba(230, 210, 210, 0.92);
-            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75);
-        }
-
-
-        .actions {
-            display: none;
-        }
-
-        .btn {
-            height: 38px;
-            border: none;
-            border-radius: 13px;
-            padding: 0 16px;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            font-weight: 800;
-            letter-spacing: 0.02em;
-            cursor: pointer;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-        }
-
-        .btn:hover {
-            transform: translateY(-1px);
-        }
-
-
-        .content-grid {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 10px;
-            width: 100%;
-            margin-top: 17px;
-        }
-
-        .panel {
-            height: 285px !important;
-            position: relative;
-            overflow: visible;
-            padding-top: 13px;
-            padding-left: 12px;
-            padding-right: 12px;
-            padding-bottom: 50px;
-            /* panel title에서 */
-            border-radius: 20px;
-            background: rgba(10, 12, 20, 0.72);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.03),
-                0 10px 18px rgba(0, 0, 0, 0.16);
-        }
-
-        .panel::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg,
-                    rgba(255, 88, 54, 0.035),
-                    transparent 42%,
-                    rgba(109, 72, 255, 0.035));
-            pointer-events: none;
-        }
-
-        .panel-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 9px;
-            font-size: 15px;
-            font-weight: 900;
-            letter-spacing: 0.04em;
-        }
-
-        .panel-icon {
-            width: 8px;
-            height: 8px;
-            border-radius: 3px;
-            background: linear-gradient(135deg, var(--red), var(--purple));
-            box-shadow: 0 0 8px rgba(255, 88, 54, 0.20);
-        }
-
-        /* 중앙카드 */
-        .list {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-
-            max-height: 200px;
-            /* ← 핵심 */
-            overflow: hidden;
-            /* 넘치면 잘림 */
-            transition: opacity 0.22s ease, transform 0.22s ease;
-        }
-
-        .list.is-switching {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-
-        .item {
-            min-height: 57px;
-        }
-
-
-
-        .item h4 {
-            font-size: 13.5px;
-            font-weight: 800;
-            margin-bottom: 1px;
-            letter-spacing: 0.01em;
-            line-height: 1.25;
-        }
-
-        .item p {
-            font-size: 12px;
-            line-height: 1.42;
-            color: var(--muted);
-            opacity: 0.95;
-
-            display: -webkit-box;
-            line-clamp: 2;
-            -webkit-line-clamp: 2;
-            /* 2줄 제한 */
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        /* 2줄제한 ... 스타일 */
-        .global-tooltip {
-            position: fixed;
-            left: 0;
-            top: 0;
-            z-index: 9999;
-
-            max-width: 260px;
-            padding: 10px 12px;
-
-            border-radius: 10px;
-            background: rgba(18, 18, 24, 0.96);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-
-            color: #f3f3f7;
-            font-size: 12px;
-            line-height: 1.5;
-            white-space: normal;
-            word-break: keep-all;
-            overflow-wrap: break-word;
-
-            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.38);
-            
-            -webkit-
-
-            opacity: 0;
-            visibility: hidden;
-            transform: translateY(4px);
-            transition: opacity 0.14s ease, transform 0.14s ease, visibility 0.14s ease;
-
-            pointer-events: none;
-        }
-
-        .global-tooltip.show {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .desc-text {
-            position: relative;
-            font-size: 12px;
-            line-height: 1.35;
-            color: var(--muted);
-            opacity: 0.9;
-
-            display: -webkit-box;
-            line-clamp: 2;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .desc-text.is-truncated {
-            cursor: pointer;
-        }
-
-
-
-        .panel-footer {
-            position: absolute;
-            left: 12px;
-            right: 12px;
-            bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .pager {
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            grid-template-columns: 1fr 1fr;
             gap: 10px;
         }
-
-        .page-indicator {
-            min-width: 30px;
-            text-align: center;
-            font-size: 11px;
-            font-weight: 700;
-            color: rgba(255, 246, 246, 0.863);
-            letter-spacing: 0.02em;
-        }
-
-        .page-btn {
-            min-width: 16px;
-            height: 16px;
-            padding: 0 10px;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            font-weight: 700;
-            color: rgba(235, 238, 245, 0.75);
-            border-radius: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            background: linear-gradient(180deg,
-                    rgba(255, 255, 255, 0.10) 0%,
-                    rgba(255, 255, 255, 0.03) 100%);
-            
-            -webkit-
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.12),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.35),
-                0 6px 16px rgba(0, 0, 0, 0.35);
-            cursor: pointer;
-            transition: all 0.18s ease;
-        }
-
-        .page-btn:hover {
-            color: #ffffff;
-            border-color: rgba(255, 255, 255, 0.16);
-            background: linear-gradient(180deg,
-                    rgba(255, 255, 255, 0.18) 0%,
-                    rgba(255, 255, 255, 0.05) 100%);
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.18),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.40),
-                0 10px 22px rgba(0, 0, 0, 0.45);
-            transform: translateY(-1px);
-        }
-
-        .page-btn:active {
-            transform: translateY(0);
-        }
-
-        .bottom-strip {
-            position: absolute;
-            left: 72px;
-            right: 12px;
-            bottom: 8px;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            z-index: 2;
-            pointer-events: none;
-        }
-
-        .version,
-        .hint {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 6px 10px;
-            border-radius: 4px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            color: #d7d9e6;
-            font-size: 13px;
-            line-height: 1;
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.03),
-                0 3px 8px rgba(0, 0, 0, 0.08);
-            white-space: nowrap;
-            pointer-events: auto;
-            margin-left: auto;
-
-        }
-
-
-        .hint strong {
-            color: rgba(255, 255, 255, 0.82);
-            font-weight: 700;
-            margin-right: 2px;
-        }
-
-
-        .home-icon {
-            color: rgba(255, 255, 255, 0.82);
-            font-size: 13px;
-            line-height: 1;
-            transform: translateY(-1px);
-        }
-
-        .home-link {
-            color: #d7d9e6;
-        }
-
-
-        /* 미니북 */
-        .page {
-            display: none;
-            width: 100%;
-            height: 100%;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        /* 시간표 */
-        .launcher.schedule-mode {
-            background-image:
-                linear-gradient(90deg,
-                    rgba(8, 8, 14, 0.62) 0%,
-                    rgba(20, 8, 14, 0.40) 32%,
-                    rgba(48, 10, 16, 0.24) 58%,
-                    rgba(8, 8, 14, 0.36) 100%),
-                url("qorud.png");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-
-        /* 아이콘 */
-        #page-schedule .schedule-header {
-            position: relative;
-        }
-
-        #page-schedule .schedule-title-row {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            position: relative;
-        }
-
-        #page-schedule .headline {
-            margin-bottom: 0;
-        }
-
-        #page-schedule .main-text {
-            font-family: "Do Hyeon", sans-serif;
-            transform: none;
-
-            display: inline-flex;
-            align-items: center;
-
-            font-size: 30px;
-            font-weight: 400;
-            letter-spacing: -0.03em;
-
-            color: #ffffff;
-
-            /* 👇 이거 추가 (핵심) */
-            
-            background: none;
-
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.22);
-        }
-
-        /* 아이콘 */
-        .info-wrap {
-            position: relative;
-            display: inline-flex;
-            align-items: center;
-        }
-
-        .info-icon {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            border: 1px solid rgba(255, 255, 255, 0.22);
-            font-size: 13px;
-            font-weight: 700;
-            line-height: 1;
-            color: rgba(255, 255, 255, 0.78);
-            cursor: pointer;
-            transition: all 0.18s ease;
-            user-select: none;
-        }
-
-        .info-icon:hover {
-            color: #ffffff;
-            border-color: rgba(255, 255, 255, 0.38);
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.10);
-        }
-
-        /* 툴팁 */
-        .schedule-tooltip {
-            position: absolute;
-            top: -4px;
-            left: calc(100% + 12px);
-            transform: translateY(0);
-
-            width: 460px;
-            max-width: 460px;
-            padding: 14px 16px;
-            border-radius: 12px;
-
-            background: linear-gradient(180deg,
-                    rgba(20, 20, 30, 0.62),
-                    rgba(12, 12, 22, 0.72));
-            border: 1px solid rgba(255, 255, 255, 0.08);
-
-            
-            -webkit-
-
-            box-shadow:
-                0 10px 30px rgba(0, 0, 0, 0.30),
-                inset 0 1px 0 rgba(255, 255, 255, 0.04);
-
-            font-size: 13px;
-            line-height: 1.65;
-            color: rgba(255, 255, 255, 0.9);
-
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-            transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s ease;
-            z-index: 30;
-        }
-
-        .schedule-tooltip p {
-            margin: 0;
-        }
-
-        .schedule-tooltip p+p {
-            margin-top: 4px;
-        }
-
-        .info-wrap:hover .schedule-tooltip {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-        }
-
-        .schedule-tooltip::before {
-            content: "";
-            position: absolute;
-            top: 14px;
-            left: -6px;
-
-            width: 12px;
-            height: 12px;
-
-            background: rgba(20, 20, 30, 0.85);
-            border-left: 1px solid rgba(255, 255, 255, 0.08);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-
-            transform: rotate(45deg);
-        }
-
-
-
-        body.schedule-active .bottom-strip {
-            display: none;
-        }
-
-        #page-schedule {
-            display: none;
-            width: 100%;
-            height: 100%;
-        }
-
-        #page-schedule.active {
-            display: block;
-        }
-
-        #page-schedule .schedule-header {
-            padding: 4px 0 1px;
-            margin-bottom: 1px;
-            background: transparent;
-            border: none;
-            box-shadow: none;
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-        }
-
-        .schedule-header {
-            position: relative;
-        }
-
-        .schedule-link {
-            position: absolute;
-            top: 4px;
-            right: 8px;
-
-            font-size: 12px;
-            padding: 5px 10px;
-
-            border-radius: 1px;
-
-            background: rgba(0, 0, 0, 0.35);
-            
-
-            border-left: none;
-            border-right: none;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-
-            color: rgba(255, 255, 255, 0.75);
-        }
-
-        #page-schedule .headline {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            margin-bottom: 0;
-            line-height: 1;
-        }
-
-
-
-        #page-schedule .sub-text {
-            font-size: 16px;
-            font-weight: 700;
-            letter-spacing: 0.01em;
-            opacity: 0.82;
-            transform: none;
-        }
-
-        /*표와 제목 사이 간격 */
-        #page-schedule .schedule-wrap {
-            margin-top: 15px;
-        }
-
-        .schedule-wrap {
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
-
-        .schedule-scale {
-            width: 100%;
-            transform: scale(1);
-            transform-origin: top center;
-        }
-
-        .schedule-table,
-        .schedule-subtable {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
-            overflow: hidden;
-            border-radius: 8px;
-            background: linear-gradient(180deg,
-                    rgba(24, 24, 36, 0.50) 0%,
-                    rgba(16, 17, 28, 0.56) 55%,
-                    rgba(10, 11, 18, 0.64) 100%);
-
-            border-left: none;
-            border-right: none;
-            border-top: 1px solid rgba(49, 26, 26, 0.61);
-            border-bottom: 1px solid rgba(49, 26, 26, 0.61);
-
-            
-            -webkit-
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.04),
-                0 10px 24px rgba(0, 0, 0, 0.22);
-        }
-
-        .schedule-table {
-            width: 95%;
-            margin: 0 auto 14px;
-        }
-
-        .schedule-subtable {
-            width: 95%;
-            margin: 10px auto 0;
-            line-height: 1.1;
-            background: linear-gradient(135deg,
-                    rgba(65, 13, 13, 0.58),
-                    rgba(52, 8, 20, 0.42));
-            color: #fff2f6;
-        }
-
-        /* 오후/ 컨텐츠 */
-        .schedule-table thead th {
-            padding: 7px 10px;
-            line-height: 1.5;
-            font-size: 16px;
-            font-weight: 800;
-            color: #fff4f4;
-            text-align: center;
-            background: linear-gradient(90deg,
-                    rgba(120, 18, 36, 0.24),
-                    rgba(86, 16, 36, 0.14));
-            border-bottom: 1px solid rgba(255, 255, 255, 0.12);
-            
-            -webkit-
-        }
-
-        .schedule-table thead th:first-child {
-            width: 90px;
-        }
-
-        .schedule-table tbody td {
-            padding: 6px 10px;
-            line-height: 1.2;
-            font-size: 13px;
-            text-align: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .schedule-table td[rowspan] {
-            vertical-align: middle;
-        }
-
-        /* 시간 */
-        .schedule-table tbody td:first-child {
-            width: 90px;
-            font-size: 16px;
-            font-weight: 900;
-            color: #f8f6f1;
-            background: linear-gradient(180deg,
-                    rgba(120, 18, 36, 0.24),
-                    rgba(86, 16, 36, 0.14));
-            border-right: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        /* 컨텐츠 */
-        .schedule-table tbody td:last-child {
-            color: #f5f0f7;
-            font-size: 16px;
-            font-weight: 900;
-        }
-
-        /* 악마의 광장 - 금빛 */
-        .row-main td:last-child {
-            line-height: 1.8;
-            background: linear-gradient(135deg,
-                    rgba(206, 137, 35, 0.48),
-                    rgba(255, 179, 71, 0.34));
-            color: #fff5e6;
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
-        }
-
-        /* 콜로세움 카레인 - 딥 와인 */
-        .row-boss-dark td:last-child {
-            line-height: 1.8;
-            background: linear-gradient(135deg,
-                    rgba(7, 39, 10, 0.637),
-                    rgba(3, 37, 3, 0.192));
-            color: #fff2f6;
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.20);
-        }
-
-        /* 침묵의 땅 브로가이스 - 보랏빛 브론즈 */
-        .row-boss-light td:last-child {
-            line-height: 1.8;
-            background: linear-gradient(135deg,
-                    rgba(122, 88, 146, 0.42),
-                    rgba(88, 62, 110, 0.30));
-            color: #f7f0ff;
-            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.20);
-        }
-
-        /* 도플갱어 - 루비 레드 */
-        .row-red td:last-child {
-            line-height: 1.8;
-            background: linear-gradient(135deg,
-                    rgba(182, 18, 36, 0.58),
-                    rgba(120, 8, 22, 0.42));
-            color: #fff7f8;
-            font-weight: 900;
-            text-shadow: 0 1px 5px rgba(0, 0, 0, 0.24);
-        }
-
-        .schedule-table tbody tr:last-child td {
-            border-bottom: none;
-        }
-
-        .schedule-table tbody tr:hover td {
-            filter: brightness(1.06);
-        }
-
-
-
-        .schedule-subtable td {
-            padding: 6px 12px;
-            font-size: 13px;
-            color: #ece5ef;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            background: linear-gradient(180deg,
-                    rgba(18, 18, 28, 0.25) 0%,
-                    rgba(12, 13, 22, 0.30) 100%);
-        }
-
-        .schedule-subtable tr:last-child td {
-            border-bottom: none;
-        }
-
-        .schedule-subtable td:first-child {
-            width: 105px;
-            font-weight: 800;
-            color: #ffffff;
-            background: linear-gradient(135deg,
-                    rgba(120, 18, 36, 0.24),
-                    rgba(86, 16, 36, 0.14));
-        }
-
-        .schedule-notes {
-            margin-top: 14px;
-            padding: 12px 14px;
-            border-radius: 14px;
-            background: linear-gradient(180deg,
-                    rgba(18, 18, 28, 0.28),
-                    rgba(10, 12, 20, 0.40));
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            
-            -webkit-
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-
-        .schedule-notes p {
-            font-size: 12px;
-            line-height: 1.5;
-            color: #e6deea;
-            opacity: 0.94;
-        }
-
-
-
-        /* =========================
-           미니북
-        ========================= */
-
-        body.minibook-active .bottom-strip {
-            display: none !important;
-        }
-
-        #page-minibook {
-            display: none;
-            width: 100%;
-            height: 100%;
-            padding-top: 2px;
-        }
-
-        #page-minibook.active {
-            display: block;
-        }
-
-        .minibook-top {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            padding: 0 10px;
-            margin-bottom: 6px;
-        }
-
-        .minibook-link {
-            margin-top: 10px;
-            font-size: 12px;
-            color: rgba(255, 255, 255, 0.75);
-
-            background: rgba(0, 0, 0, 0.35);
-            padding: 4px 10px;
-            border-radius: 6px;
-
-            backdrop-filter: blur(4px);
-            white-space: nowrap;
-        }
-
-        .guide-highlight {
-            color: #ffffff;
-            font-weight: 700;
-        }
-
-        /* =========================
-   미니북
-   ========================= */
-
-
-        .launcher.minibook-mode {
-            background-image:
-                linear-gradient(90deg,
-                    rgba(6, 6, 10, 0.85) 0%,
-                    rgba(12, 10, 14, 0.65) 30%,
-                    rgba(10, 8, 14, 0.35) 60%,
-                    rgba(4, 5, 10, 0.75) 100%),
-                url("qorud.png");
-            /* ← 여기 바꾸면 됨 */
-
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-        #page-minibook,
-        #page-minibook * {
-            box-sizing: border-box;
-        }
-
-        #page-minibook {
-            color: #2c2f36;
-        }
-
-
-
-        .minibook-page-title {
-            font-size: 28px;
-            font-weight: 900;
-            color: #ffffff;
-            letter-spacing: -0.04em;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
-        }
-
-
-
-        /* 종이판 */
-        .minibook-shell {
-            margin-top: 12px;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-        }
-
-        /*크기*/
-        .minibook-paper {
-            min-height: 0;
-            position: relative;
-            width: 670px;
-            height: 390px;
-            display: grid;
-            grid-template-columns: 188px 1fr;
-            padding: 14px 18px 12px 22px;
-            border-radius: 28px;
-            overflow: hidden;
-
-            background-color: #f2eee4;
-            background-image:
-                repeating-linear-gradient(0deg,
-                    rgba(80, 84, 92, 0.06) 0px,
-                    rgba(80, 84, 92, 0.06) 1px,
-                    transparent 1px,
-                    transparent 16px),
-                repeating-linear-gradient(90deg,
-                    rgba(80, 84, 92, 0.06) 0px,
-                    rgba(80, 84, 92, 0.06) 1px,
-                    transparent 1px,
-                    transparent 16px),
-                linear-gradient(180deg, #f6f3ea 0%, #ece6d8 100%);
-
-            border: 4px solid rgba(28, 28, 30, 0.96);
-
-            box-shadow:
-                5px 5px 0 rgba(255, 255, 255, 0.50),
-                10px 10px 0 rgba(22, 22, 26, 0.82),
-                0 18px 28px rgba(0, 0, 0, 0.24);
-        }
-
-        .minibook-paper::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            background: rgba(255, 255, 255, 0.08);
-        }
-
-        .book-rings {
-            position: absolute;
-            left: -18px;
-            top: 0;
-            bottom: 0;
-            width: 36px;
-            pointer-events: none;
-            z-index: 3;
-        }
-
-        .ring {
-            position: absolute;
-            left: 0;
-            width: 26px;
-            height: 10px;
-            border-radius: 999px;
-            background: #191a1f;
-            box-shadow:
-                2px 2px 0 rgba(255, 255, 255, 0.18),
-                4px 4px 0 rgba(20, 20, 24, 0.78);
-        }
-
-        .ring::before,
-        .ring::after {
-            content: "";
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 8px;
-            height: 3px;
-            border-radius: 999px;
-            background: #191a1f;
-        }
-
-        .ring::before {
-            left: -6px;
-        }
-
-        .ring::after {
-            right: -6px;
-        }
-
-        .ring-1 {
-            top: 40px;
-        }
-
-        .ring-2 {
-            top: 92px;
-        }
-
-        .ring-3 {
-            top: 144px;
-        }
-
-        .ring-4 {
-            top: 196px;
-        }
-
-        .ring-5 {
-            top: 248px;
-        }
-
-        .ring-6 {
-            top: 300px;
-        }
-
-        .ring-7 {
-            top: 352px;
-        }
-
-        /* 중앙선 */
-        .book-center-line {
-            position: absolute;
-            top: 18px;
-            bottom: 16px;
-            left: 195px;
-            width: 1px;
-            background: rgba(55, 58, 64, 0.14);
-            box-shadow: 1px 0 0 rgba(255, 255, 255, 0.22);
-            pointer-events: none;
-        }
-
-        /* 좌우 영역 */
-        .book-left,
-        .book-right {
-            position: relative;
-            z-index: 2;
-            min-width: 0;
-            min-height: 0;
-        }
-
-        .book-left {
-            height: 100%;
-            min-height: 0;
-            align-self: stretch;
-            padding: 2px 8px 14px 10px;
-            /* 오른쪽 패딩 줄임 */
+        
+        .news-section, .rankings-section {
             overflow-y: auto;
-            color: #2f3239;
-            scrollbar-width: thin;
-            scrollbar-color: #d9b24c transparent;
         }
 
-        .book-left::-webkit-scrollbar {
-            width: 12px;
-            /* 기존보다 얇게 */
-        }
-
-        .book-left::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        .book-left::-webkit-scrollbar-thumb {
-            border-radius: 999px;
-            border: 1px solid rgba(126, 88, 28, 0.28);
-            background:
-                linear-gradient(180deg,
-                    #3a3a3a 0%,
-                    #3a3a3a 8%,
-                    #f6dd84 8%,
-                    #efc861 62%,
-                    #d89d42 100%);
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.30),
-                0 1px 2px rgba(0, 0, 0, 0.08);
-        }
-
-        .book-left::-webkit-scrollbar-button {
-            display: none;
-            width: 0;
-            height: 0;
-        }
-
-        .book-left::-webkit-scrollbar-corner {
-            background: transparent;
-        }
-
-        .book-right {
-            padding: 2px 0 0 20px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* 좌측 제목 */
-        .book-tab {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            height: 26px;
-            padding: 0 12px;
-            margin-bottom: 10px;
-            border-radius: 999px;
-            background: #dedbd5;
-            color: #333741;
-            font-size: 12px;
-            font-weight: 900;
-        }
-
-        .book-category+.book-category {
-            margin-top: 12px;
-        }
-
-        .book-category-title {
-            margin-bottom: 6px;
-            font-size: 13px;
-            font-weight: 900;
-            letter-spacing: -0.02em;
-        }
-
-        /* 아이템 */
-        .cat-item .book-category-title {
-            color: #b37b00;
-        }
-
-        .cat-item .book-menu.active {
-            background: rgba(179, 123, 0, 0.18);
-        }
-
-        /* 컨텐츠 */
-        .cat-content .book-category-title {
-            color: #a83f1f;
-        }
-
-        .cat-content .book-menu.active {
-            background: rgba(168, 63, 31, 0.18);
-        }
-
-        /* 보스 */
-        .cat-boss .book-category-title {
-            color: #5b3bb3;
-        }
-
-        .cat-boss .book-menu.active {
-            background: rgba(91, 59, 179, 0.18);
-        }
-
-        /* 좌측 메뉴 - 버튼 느낌 제거 */
-        .book-menu {
-            appearance: none;
-            -webkit-appearance: none;
+        /* Grid placement para layout 2x2 */
+        .news-section { grid-column: 1; grid-row: 1; }
+        .rankings-section { grid-column: 2; grid-row: 1; }
+        
+        .socButton {
             width: 100%;
-            border: none;
-            outline: none;
-            background: transparent;
-            box-shadow: none;
-
             display: flex;
-            align-items: center;
-            gap: 8px;
-
-            padding: 7px 8px;
-            margin: 0 0 2px 0;
-            border-radius: 8px;
-
-            color: #2c2f36;
-            font-size: 12px;
-            font-weight: 800;
-            text-align: left;
-            cursor: pointer;
-            transition: background 0.16s ease, color 0.16s ease, transform 0.16s ease;
-        }
-
-        .book-menu:hover {
-            background: rgba(80, 84, 92, 0.08);
-            transform: translateX(1px);
-        }
-
-        .book-menu.active {
-            background: #d6d1c7;
-            color: #191c22;
-        }
-
-        .book-menu-icon {
-            width: 16px;
-            min-width: 16px;
-            text-align: center;
-            font-size: 13px;
-            opacity: 0.95;
-        }
-
-        .book-menu-text {
-            flex: 1;
-            line-height: 1.25;
-
-            word-break: keep-all;
-        }
-
-        /* 우측 상단 */
-        .book-entry-head {
-            padding-bottom: 2px;
-            margin-bottom: 10px;
-            border-bottom: 2px solid rgba(0, 0, 0, 0.15);
-            box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
-        }
-
-        .book-entry-topline {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 6px;
-        }
-
-        .book-entry-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-
-            height: auto;
-            min-height: 22px;
-            padding: 4px 12px 5px;
-
-            border-radius: 999px;
-
-            font-size: 12px;
-            font-weight: 900;
-            line-height: 1;
-
-            width: auto;
-            min-width: 0;
-            white-space: nowrap;
-        }
-
-        /* 제목라인 항목 스타일*/
-        .book-entry-badge.item {
-            background: rgba(255, 165, 0, 0.16);
-            color: #c47a00;
-        }
-
-        .book-entry-badge.content {
-            background: rgba(220, 38, 38, 0.12);
-            color: #b42318;
-        }
-
-        .book-entry-badge.boss {
-            background: rgba(109, 40, 217, 0.14);
-            color: #6d28d9;
-        }
-
-        /**/
-
-
-        .book-entry-title {
-            font-family: "Nanum Pen Script", cursive;
-            font-size: 34px;
-            font-weight: 400;
-            line-height: 1.2;
-            letter-spacing: 0.01em;
-            color: #24272e;
-            margin: 0;
-            display: flex;
-            align-items: flex-end;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        /*제목 상점, 제작 표기*/
-        .book-title-tags {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            transform: translateY(-2px);
-        }
-
-        .book-title-tag {
-            font-family: "Nanum Pen Script", cursive;
-            font-size: 22px;
-            font-weight: 400;
-            line-height: 1;
-            letter-spacing: 0.01em;
-        }
-
-        .book-title-tag.make {
-            color: #18a63d;
-        }
-
-        .book-title-tag.shop {
-            color: #c43a2f;
-        }
-
-        /*ㄴ제목 상점, 제작 표기*/
-
-        .book-entry-sub {
-
-            color: #555a63;
-            font-size: 13px;
-            font-weight: 700;
-            line-height: 1.4;
-
-            margin: 0;
-            margin-top: 0px;
-            margin-bottom: 4px !important;
-
-        }
-
-        .book-divider {
-            margin: 6px 0 10px;
-        }
-
-        /* 페이지 버튼 - 기본 버튼 느낌 제거 */
-        .book-pagination {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .book-page-btn {
-            appearance: none;
-            -webkit-appearance: none;
-            border: 1px solid #bdb7ad;
-            background: #f7f4ed;
-            color: #1f232b;
-            width: 24px;
-            height: 24px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: 900;
-            line-height: 1;
-            cursor: pointer;
-            box-shadow: none;
-            transition: background 0.16s ease, transform 0.16s ease;
-        }
-
-        .book-page-btn:hover {
-            background: #ebe5d8;
-            transform: translateY(-1px);
-        }
-
-        .book-page-indicator {
-            min-width: 54px;
-            text-align: center;
-            font-size: 12px;
-            font-weight: 900;
-            color: #454951;
-        }
-
-        /* 내용 */
-        .book-entry-body {
-            flex: 1;
-            overflow-y: auto;
-            padding-right: 6px;
-            color: #24272e;
-            scrollbar-width: thin;
-            scrollbar-color: rgba(70, 74, 82, 0.35) transparent;
-        }
-
-        .book-entry-body::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .book-entry-body::-webkit-scrollbar-thumb {
-            background: rgba(70, 74, 82, 0.28);
-            border-radius: 999px;
-        }
-
-        .book-block {
-            margin-bottom: 14px;
-        }
-
-        .book-block-title {
-            margin-bottom: 6px;
-            color: #523d21;
-            font-size: 13.5px;
-            font-weight: 900;
-        }
-
-        .book-list {
-            margin: 0;
-            padding: 0;
-        }
-
-        .book-list li {
-            margin: 0 0 6px 18px;
-            color: #2f333b;
-            font-size: 13px;
-            font-weight: 700;
-            line-height: 1.55;
-        }
-
-        /* 하단 팁 */
-        .book-entry-tip {
-            margin-top: 8px;
-            padding: 10px 12px;
-            border-radius: 12px;
-            background: rgba(70, 74, 82, 0.06);
-            border: 1px solid rgba(70, 74, 82, 0.10);
-            color: #4e545e;
-            font-size: 12px;
-            font-weight: 800;
-            line-height: 1.5;
-        }
-
-
-        /* =========================
-   FAQ
-========================= */
-        .launcher.faq-mode {
-            background-image:
-                linear-gradient(90deg,
-                    rgba(6, 4, 8, 0.82) 0%,
-                    rgba(10, 7, 12, 0.62) 28%,
-                    rgba(14, 8, 10, 0.34) 56%,
-                    rgba(8, 6, 12, 0.70) 100%),
-                radial-gradient(circle at 78% 40%, rgba(185, 38, 22, 0.18), transparent 24%),
-                radial-gradient(circle at 20% 80%, rgba(88, 28, 135, 0.12), transparent 28%),
-                url("qorud4.png");
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
-
-        #page-faq {
-            display: none;
-            width: 100%;
-            height: 100%;
-            padding-top: 4px;
-        }
-
-        #page-faq.active {
-            display: block;
-        }
-
-        .faq-wrap {
-            width: 100%;
-            height: 100%;
-            padding: 2px 12px 0 6px;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .faq-header {
-            margin-bottom: 18px;
-            padding-left: 2px;
-        }
-
-        .faq-title {
-
-            font-size: 36px;
-            font-weight: 900;
-            letter-spacing: -0.04em;
-            line-height: 1;
+            text-decoration: none;
             color: #ffffff;
-            text-shadow:
-                0 2px 10px rgba(0, 0, 0, 0.34),
-                0 0 18px rgba(255, 90, 54, 0.10);
-        }
-
-        .faq-list {
-            flex: 1;
-            overflow-y: auto;
-
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-
-            padding-top: 4px;
-            padding-left: 28px;
-            padding-right: 14px;
-            padding-bottom: 18px;
-
-            scrollbar-width: thin;
-            scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
-        }
-
-        .faq-list::-webkit-scrollbar {
-            width: 6px;
-        }
-
-        .faq-list::-webkit-scrollbar-thumb {
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.16);
-        }
-
-        .faq-item {
-            border-radius: 18px;
-            overflow: visible;
-            background: transparent;
-            flex: 0 0 auto;
-        }
-
-        .faq-question {
-            width: 100%;
-            min-height: 70px;
-            padding: 0 22px 0 24px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 18px;
-
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 16px;
-
-            background: linear-gradient(180deg,
-                    rgba(255, 255, 255, 0.78) 0%,
-                    rgba(239, 239, 241, 0.72) 100%);
-            
-            -webkit-
-
-            color: #161616;
-            font-family: "Noto Sans KR", sans-serif;
-            font-size: 20px;
+            font-size: 25px;
             font-weight: 600;
-            text-align: left;
-            cursor: pointer;
-
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.55),
-                0 10px 24px rgba(0, 0, 0, 0.20),
-                0 0 0 1px rgba(255, 255, 255, 0.03);
-
-            transition:
-                transform 0.18s ease,
-                background 0.18s ease,
-                box-shadow 0.18s ease,
-                border-color 0.18s ease;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            align-items: center;
+            align-content: center;
+            justify-content: flex-start;
         }
 
-        .faq-question:hover {
-            transform: translateY(-1px);
-            background: linear-gradient(180deg,
-                    rgba(255, 255, 255, 0.84) 0%,
-                    rgba(244, 244, 246, 0.76) 100%);
-            border-color: rgba(255, 255, 255, 0.14);
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.60),
-                0 14px 28px rgba(0, 0, 0, 0.24),
-                0 0 18px rgba(255, 110, 70, 0.08);
+        .socButton:hover {
+            padding-left: 10px;
+            text-decoration: none;
+            color: #ffffff;
         }
 
-        .faq-item.open .faq-question {
-            border-color: rgba(255, 255, 255, 0.16);
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.62),
-                0 14px 30px rgba(0, 0, 0, 0.26),
-                0 0 22px rgba(255, 110, 70, 0.10);
+        .socButton span {
+            display: block;
+            width: 100%;
+            color: #fcd4c0;
+            font-size: 13px;
+            font-weight: 400;
+            margin-top: 5px;
         }
 
-        .faq-q-text {
-            flex: 1;
-            min-width: 0;
-            line-height: 1.28;
-            word-break: keep-all;
+        .socButton.socDiscord {
+            background: linear-gradient(135deg, #5865F2 0%, #4752C4 100%);
+            position: relative;
         }
 
-        .faq-arrow {
-            flex: 0 0 auto;
-            font-size: 18px;
-            font-weight: 900;
-            color: rgba(25, 25, 25, 0.88);
-            transition: transform 0.22s ease, color 0.18s ease;
+        .socButton.socFacebook {
+            background: linear-gradient(135deg, #7289DA 0%, #5B6EAE 100%);
+            position: relative;
+        }
+        
+        .card-content {
+            padding: 7px;
+            position: relative;
+            z-index: 2;
         }
 
-        .faq-item.open .faq-arrow {
-            transform: rotate(180deg);
-            color: #8f2b1e;
+        .ranking-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
         }
-
-        .faq-answer {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.30s ease;
+        .ranking-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
-
-        .faq-answer-inner {
-            margin-top: 8px;
-            margin-left: 10px;
-            margin-right: 10px;
-            padding: 18px 20px 19px;
-
-            border-radius: 16px;
-            background: linear-gradient(180deg,
-                    rgba(16, 16, 22, 0.76) 0%,
-                    rgba(12, 12, 18, 0.82) 100%);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-
-            color: rgba(245, 245, 248, 0.94);
-            font-size: 14px;
+        
+        .news-section::-webkit-scrollbar,
+        .rankings-section::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .news-section::-webkit-scrollbar-track,
+        .rankings-section::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+        }
+        
+        .news-section::-webkit-scrollbar-thumb,
+        .rankings-section::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+        
+        .section-title {
+            color: #ffffff;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.2em;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
+        }
+        
+        .section-title.info-section {
+            justify-content: space-between;
+        }
+        
+        .section-title-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .news-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            padding: 13.43px;
+            margin-bottom: 10px;
+            border-left: 3px solid #64b5f6;
+            transition: all 0.3s ease;
+        }
+        
+        .news-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .news-title {
+            color: #ffffff;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            font-weight: 600;
+            line-height: 1.4;
+        }
+        
+        .news-meta {
+            color: #888888;
+            font-size: 0.75em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .news-category {
+            background: rgba(100, 181, 246, 0.15);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.85em;
+            color: #64b5f6;
             font-weight: 500;
-            line-height: 1.75;
-
-            
-            -webkit-
-
-            box-shadow:
-                inset 0 1px 0 rgba(255, 255, 255, 0.04),
-                0 10px 22px rgba(0, 0, 0, 0.18);
+        }
+        
+        .patch-news {
+            border-left-color: #ff9800;
+        }
+        
+        .patch-news .news-category {
+            background: rgba(255, 152, 0, 0.15);
+            color: #ff9800;
+        }
+        
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .ranking-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .ranking-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(100, 181, 246, 0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            color: #64b5f6;
+            font-size: 0.9em;
+            border: 1px solid rgba(100, 181, 246, 0.2);
+        }
+        
+        .ranking-info {
+            flex: 1;
+        }
+        
+        .ranking-title {
+            color: #ffffff;
+            font-weight: 600;
+            margin-bottom: 3px;
+            font-size: 0.9em;
+        }
+        
+        .ranking-subtitle {
+            color: #b0b0b0;
+            font-size: 0.8em;
+        }
+        
+        .ranking-value {
+            color: #64b5f6;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        
+        .server-status .ranking-icon {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4caf50;
+            border-color: rgba(76, 175, 80, 0.2);
+        }
+        
+        .server-status .ranking-value {
+            color: #4caf50;
+        }
+        
+        .online-players .ranking-icon {
+            background: rgba(255, 152, 0, 0.1);
+            color: #ff9800;
+            border-color: rgba(255, 152, 0, 0.2);
+        }
+        
+        .online-players .ranking-value {
+            color: #ff9800;
+        }
+        
+        .top-player .ranking-icon,
+        .top-guild .ranking-icon,
+        .pvp-champion .ranking-icon,
+        .boss-slayer .ranking-icon {
+            background: rgba(156, 39, 176, 0.1);
+            color: #9c27b0;
+            border-color: rgba(156, 39, 176, 0.2);
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .online-indicator {
+            animation: pulse 3s infinite;
+        }
+        
+        .loading {
+            color: #888;
+            font-style: italic;
         }
     </style>
-
-
 </head>
-
 <body>
-    <div class="launcher">
-        <aside class="sidebar">
-            <div class="logo-wrap">
-                <div class="logo" title="NEON"></div>
+    <div class="launcher-container">
+        
+        <div class="news-section">
+            <div class="section-title">
+                News & Updates
             </div>
 
-            <nav class="nav">
-                <button class="nav-btn active" data-page="home" title="홈">
-                    <img src="home.png" class="nav-icon" alt="홈"></button>
-
-                <button class="nav-btn" data-page="schedule" title="시간표">
-                    <img src="clock.png" class="nav-icon" alt="시간표">
-                </button>
-
-                <button class="nav-btn" data-page="minibook" title="미니북">
-                    <img src="book.png" class="nav-icon" alt="미니북">
-                </button>
-
-
-            </nav>
-
-            <div class="sidebar-bottom">
-                <button class="nav-btn" data-page="faq" title="FAQ">
-                    <img src="faq.png" class="nav-icon" alt="FAQ">
-                </button>
-                <button class="nav-btn" title="새로고침">↻</button>
+            <div class="news-item">
+                <div class="news-title">Welcome to MU Online!!!</div>
+                <div class="news-meta">
+                    <span class="news-category">News</span>
+                    <span>26/11/2025</span>
+                </div>
             </div>
-        </aside>
 
-        <main class="main">
-
-            <!-- 홈페이지 -->
-            <section class="page active" id="page-home">
-                <div>
-                    <div class="topbar">
-                        <div class="status-chip">
-                            <span class="dot"></span>
-                            <span>Online: <strong>1/500</strong></span>
-                        </div>
-                    </div>
-
-                    <section class="hero">
-                        <div>
-                            <div class="brand">
-                                <div class="brand-logo neon-logo"><span>NEON</span></div>
-                            </div>
-
-                            <h1 class="headline">
-                                <span class="main-text">어둠 속에서 더 선명하게,</span>
-                                <span class="sub-text">Season21. Part 1-3</span>
-                            </h1>
-                        </div>
-                    </section>
+            <div class="news-item">
+                <div class="news-title">New Season Starting Soon</div>
+                <div class="news-meta">
+                    <span class="news-category">Event</span>
+                    <span>25/11/2025</span>
                 </div>
+            </div>
 
-                <section class="content-grid">
-                    <article class="panel" data-panel="news">
-                        <div class="panel-title">
-                            <span class="panel-icon"></span>
-                            <span>공지사항</span>
-                        </div>
-                        <div class="list">
-                            <div class="item">
-                                <!-- 예시입니다. script에서 내용수정 
-                        <h4>New Event: Blood Castle Extreme</h4>
-                        <p>더 강력한 몬스터와 보상 구조로 재설계된 기간 한정 이벤트가
-                            열립니다.
-                        </p>
-                        -->
-                            </div>
-
-                            <div class="item">
-                                <!-- script에서 내용수정 
-                        <h4>Server Maintenance</h4>
-                        <p>정기 점검 시간 동안 런처와 패치 서버만 이용 가능합니다.</p> -->
-                            </div>
-
-                            <div class="item">
-                                <!-- 예시입니다. script에서 내용수정 
-                        <h4>New Wings Added</h4>
-                        <p>카오스 조합식과 일부 획득 경로가 새롭게 반영되었습니다.</p>-->
-                            </div>
-                            <div class="item">
-                                <!-- 예시입니다. script에서 내용수정 
-                        <h4>PvP Arena Revamp</h4>
-                        <p>매칭 구조와 전장 밸런스가 개선되어 보다 공정한 전투가 가능합니다.</p> -->
-                            </div>
-                        </div>
-                        <div class="panel-footer">
-                            <div class="pager">
-                                <button class="page-btn prev-btn" type="button">‹</button>
-                                <span class="page-indicator">1 / 1</span>
-                                <button class="page-btn next-btn" type="button">›</button>
-                            </div>
-                        </div>
-                    </article>
-
-                    <article class="panel" data-panel="changelogs">
-                        <div class="panel-title">
-                            <span class="panel-icon"></span>
-                            <span>패치노트</span>
-                        </div>
-                        <div class="list">
-                            <div class="item">
-                                <!-- 예시입니다. script에서 내용수정
-                        <h4>Balance Patch v1.3</h4>
-                        <p>MG, RF 계열 PvP 성능과 주요 스킬 연계가 전반적으로 조정되었습니다.</p> -->
-                            </div>
-                            <div class="item">
-                                <!-- 예시입니다. script에서 내용수정
-                        <h4>New Anti-Cheat Update</h4>
-                        <p>비정상 입력 패턴과 매크로 탐지 로직이 강화되었습니다.</p> -->
-                            </div>
-                            <div class="item">
-                                <!-- 예시입니다. script에서 내용수정
-                        <h4>Chaos Castle Rewards</h4>
-                        <p>소울 보석 드롭률과 참여 보상이 일부 상향되었습니다.</p> -->
-                            </div>
-                            <div class="item">
-                                <!-- 예시입니다. script에서 내용수정
-                        <h4>Shop Tooltip Upgrade</h4>
-                        <p>아이템 툴팁에서 핵심 옵션과 장착 가능 조건을 더 명확히 보여줍니다.</p> -->
-                            </div>
-                        </div>
-                        <div class="panel-footer">
-                            <div class="pager">
-                                <button class="page-btn prev-btn" type="button">‹</button>
-                                <span class="page-indicator">1 / 1</span>
-                                <button class="page-btn next-btn" type="button">›</button>
-                            </div>
-                        </div>
-                    </article>
-
-                    <article class="panel" data-panel="contents">
-                        <div class="panel-title">
-                            <span class="panel-icon"></span>
-                            <span>홈페이지 편의기능</span>
-                        </div>
-                        <div class="list">
-                            <div class="item">
-                                <!-- 예시입니다. script에서 내용수정
-                        <h4>스탯강화석</h4>
-                        <p> 필요 아이템을 소지 후 엘베란드 모스NPC를 통해 교환할 수 있습니다.</p> -->
-                            </div>
-                            <div class="item">
-                                <!-- 예시입니다. script에서 내용수정
-                        <h4>[전승]초월의보석</h4>
-                        <p>통합상점에서 구매한 템플가드 아이템을 2차 임페리얼 무기,방어구로 업그레이드할 때 사용하는 영템전용 아이템입니다.
-                        </p> -->
-                            </div>
-                            <div class="item">
-                                <!-- 예시입니다. script에서 내용수정
-                        <h4>Castle Siege</h4>
-                        <p>일요일 20:00. 점령 길드에게 시즌 전용 보상이 지급됩니다.</p> -->
-                            </div>
-                            <div class="item">
-                                <!-- 예시입니다. script에서 내용수정
-                        <h4>Rebirth Race</h4>
-                        <p>환생 횟수 기준 상위 유저에게 특별 칭호와 포인트를 제공합니다.</p> -->
-                            </div>
-
-                            <div class="item">
-                                <!-- 예시입니다. script에서 내용수정
-                        <h4>Castle Siege</h4>
-                        <p>일요일 20:00. 점령 길드에게 시즌 전용 보상이 지급됩니다.</p> -->
-                            </div>
-
-                            <div class="item">
-                                <!-- 예시입니다. script에서 내용수정
-                        <h4>Castle Siege</h4>
-                        <p>일요일 20:00. 점령 길드에게 시즌 전용 보상이 지급됩니다.</p> -->
-                            </div>
-                        </div>
-                        <div class="panel-footer">
-                            <div class="pager">
-                                <button class="page-btn prev-btn" type="button">‹</button>
-                                <span class="page-indicator">1 / 1</span>
-                                <button class="page-btn next-btn" type="button">›</button>
-                            </div>
-                        </div>
-                    </article>
-                </section>
-            </section>
-
-            <!-- 미니북 페이지 -->
-            <section class="page" id="page-minibook">
-                <div class="minibook-top">
-                    <h1 class="minibook-page-title">미니북</h1>
-                    <div class="minibook-link">
-                        자세한 사항은 <span class="guide-highlight">서버가이드</span>를 참고해주세요.
-                    </div>
+            <div class="news-item patch-news">
+                <div class="news-title">Patch 1.0 - Bug Fixes!!!</div>
+                <div class="news-meta">
+                    <span class="news-category">Update</span>
+                    <span>24/11/2025</span>
                 </div>
+            </div>
 
-                <div class="minibook-shell">
-                    <div class="minibook-paper">
-                        <div class="book-rings">
-                            <span class="ring ring-1"></span>
-                            <span class="ring ring-2"></span>
-                            <span class="ring ring-3"></span>
-                            <span class="ring ring-4"></span>
-                            <span class="ring ring-5"></span>
-                            <span class="ring ring-6"></span>
-                            <span class="ring ring-7"></span>
-                        </div>
-                        <div class="book-center-line"></div>
-
-                        <aside class="book-left">
-                            <div class="book-tab">목차</div>
-
-                            <div class="book-category cat-item">
-                                <div class="book-category-title">아이템</div>
-                                <button class="book-menu active" data-book="stat-stone">
-                                    <span class="book-menu-icon">🔷</span>
-                                    <span class="book-menu-text">스탯강화석</span>
-                                </button>
-                                <button class="book-menu" data-book="trans-jewel">
-                                    <span class="book-menu-icon">💎</span>
-                                    <span class="book-menu-text">[전승] 초월의 보석</span>
-                                </button>
-                                <button class="book-menu" data-book="ragnarok-wing">
-                                    <span class="book-menu-icon">🪽</span>
-                                    <span class="book-menu-text">[신화날개] 라그나로크</span>
-                                </button>
-                                <button class="book-menu" data-book="pharaoh-gold">
-                                    <span class="book-menu-icon">🏺</span>
-                                    <span class="book-menu-text">파라오의 황금</span>
-                                </button>
-                                <button class="book-menu" data-book="aegis-necklace">
-                                    <span class="book-menu-icon">📿</span>
-                                    <span class="book-menu-text">아이기스의 목걸이</span>
-                                </button>
-                                <button class="book-menu" data-book="longinus-ring">
-                                    <span class="book-menu-icon">💍</span>
-                                    <span class="book-menu-text">롱기누스의 반지</span>
-                                </button>
-                                <button class="book-menu" data-book="neon-set">
-                                    <span class="book-menu-icon">✧</span>
-                                    <span class="book-menu-text">네온펫 / 변반 / 깃발</span>
-                                </button>
-                            </div>
-
-                            <div class="book-category cat-content">
-                                <div class="book-category-title">컨텐츠</div>
-                                <button class="book-menu" data-book="devil-square">
-                                    <span class="book-menu-icon">⚔</span>
-                                    <span class="book-menu-text">악마의광장</span>
-                                </button>
-                                <button class="book-menu" data-book="boss-chaos">
-                                    <span class="book-menu-icon">⚔</span>
-                                    <span class="book-menu-text">다함께보스전 / 카오스캐슬</span>
-                                </button>
-                                <button class="book-menu" data-book="illusion-temple">
-                                    <span class="book-menu-icon">⚔</span>
-                                    <span class="book-menu-text">환영의사원</span>
-                                </button>
-                                <button class="book-menu" data-book="doppelganger">
-                                    <span class="book-menu-icon">👥</span>
-                                    <span class="book-menu-text">도플갱어</span>
-                                </button>
-                            </div>
-
-                            <div class="book-category cat-boss">
-                                <div class="book-category-title">필드보스</div>
-                                <button class="book-menu" data-book="silent-land">
-                                    <span class="book-menu-icon">👁</span>
-                                    <span class="book-menu-text">침묵의 땅 브로카이스</span>
-                                </button>
-                                <button class="book-menu" data-book="colosseum">
-                                    <span class="book-menu-icon">👁</span>
-                                    <span class="book-menu-text">콜로세움 카레인</span>
-                                </button>
-                            </div>
-                        </aside>
-
-                        <section class="book-right">
-                            <div class="book-entry-head">
-                                <div class="book-entry-topline">
-                                    <div class="book-entry-badge" id="bookBadge">아이템</div>
-
-                                    <div class="book-pagination">
-                                        <button type="button" class="book-page-btn" id="bookPrevBtn">◀</button>
-                                        <span class="book-page-indicator" id="bookPageIndicator">1 / 12</span>
-                                        <button type="button" class="book-page-btn" id="bookNextBtn">▶</button>
-                                    </div>
-                                </div>
-
-                                <h2 class="book-entry-title">
-                                    <span id="bookTitle">스탯강화석</span>
-                                    <span class="book-title-tags" id="bookTitleTags"></span>
-                                </h2>
-                                <p class="book-entry-sub" id="bookSub">스탯을 누적 성장시키는 제작형 핵심 아이템</p>
-                            </div>
-
-                            <div class="book-entry-body" id="bookBody"></div>
-
-                            <div class="book-entry-tip" id="bookTip">
-                                총 스탯은 인게임에서 바로 확인이 어려우니 따로 메모해두는 것을 추천합니다.
-                            </div>
-                        </section>
-                    </div>
+            <a href="#" class="socButton socDiscord">
+                <div class="card-content">
+                    Guides
+                    <span>Starter guides,<br>droplist &amp; tutorials</span>
                 </div>
-            </section>
-
-            <!--시간표 페이지-->
-            <section class="page" id="page-schedule">
-                <div class="schedule-header">
-
-                    <div class="schedule-link">
-                        https://mu123.net
-                    </div>
-
-                    <div class="schedule-title-row">
-                        <h1 class="headline">
-                            <span class="main-text">주요 컨텐츠 시간표</span>
-                        </h1>
-
-                        <div class="info-wrap">
-                            <span class="info-icon">i</span>
-                            <div class="schedule-tooltip">
-                                <p>* 콜로세움, 침묵의 땅을 제외한 인게임 컨텐츠들은 5분전부터 입장이 가능하며, 정시에는 입장 불가합니다.</p>
-                                <p>* 일부 컨텐츠는 X샵에서 입장권을 미리 구입해야합니다.(무료)</p>
-                                <p>* 환영의사원, 악마의광장, 도플갱어는 정원 초과시 입장 불가능합니다.</p>
-                                <p>* 네온 깃발 아이템 착용시 카오스캐슬 입장이 되지 않는 경우가 있으니, 착용 해제 후 입장하고, 입장 후 재착용해주세요.</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="schedule-wrap">
-                        <div class="schedule-scale">
-                            <table class="schedule-table">
-                                <thead>
-                                    <tr>
-                                        <th>오후</th>
-                                        <th>컨텐츠</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr class="row-main">
-                                        <td>5시</td>
-                                        <td>악마의 광장</td>
-                                    </tr>
-                                    <tr class="row-boss-dark">
-                                        <td>6시</td>
-                                        <td>[보스] 콜로세움 카레인</td>
-                                    </tr>
-                                    <tr class="row-boss-light">
-                                        <td>7시</td>
-                                        <td>[보스] 침묵의 땅 브로카이스</td>
-                                    </tr>
-                                    <tr class="row-red">
-                                        <td>8시</td>
-                                        <td>도플갱어</td>
-                                    </tr>
-                                    <tr class="row-boss-light">
-                                        <td>9시</td>
-                                        <td>[보스] 침묵의 땅 브로카이스</td>
-                                    </tr>
-                                    <tr class="row-boss-dark">
-                                        <td>10시</td>
-                                        <td>[보스] 콜로세움 카레인</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                            <table class="schedule-subtable">
-                                <tbody>
-                                    <tr>
-                                        <td>카오스캐슬</td>
-                                        <td>24시간 매 홀수시간마다</td>
-                                    </tr>
-                                    <tr>
-                                        <td>다함께보스전</td>
-                                        <td>24시간 매 짝수시간마다</td>
-                                    </tr>
-                                    <tr>
-                                        <td>환영의 사원</td>
-                                        <td>24시간 매 홀수시간 30분마다</td>
-                                    </tr>
-                                </tbody>
-                            </table>
-
-                        </div>
-                    </div>
-            </section>
-
-            <!-- FAQ 페이지 -->
-            <section class="page" id="page-faq">
-                <div class="faq-wrap">
-                    <div class="faq-header">
-                        <h1 class="faq-title">FAQ</h1>
-                    </div>
-
-                    <div class="faq-list">
-                        <article class="faq-item">
-                            <button class="faq-question" type="button">
-                                <span class="faq-q-text">1. 접속기 실행시 런타임 오류가 발생하는 경우</span>
-                                <span class="faq-arrow">▾</span>
-                            </button>
-                            <div class="faq-answer">
-                                <div class="faq-answer-inner">
-                                    런타임 오류가 발생할 경우, 접속기를 관리자 권한으로 실행해보시고
-                                    Visual C++ 재배포 패키지가 정상 설치되어 있는지 확인해주세요.
-                                    또한 백신 프로그램이 실행 파일을 차단하고 있지 않은지도 함께 점검해주세요.
-                                </div>
-                            </div>
-                        </article>
-
-                        <article class="faq-item">
-                            <button class="faq-question" type="button">
-                                <span class="faq-q-text">2. VCRUNTIME140.dll 에러 발생시</span>
-                                <span class="faq-arrow">▾</span>
-                            </button>
-                            <div class="faq-answer">
-                                <div class="faq-answer-inner">
-                                    해당 오류는 보통 Visual C++ Redistributable 미설치 또는 손상으로 발생합니다.
-                                    Microsoft Visual C++ 2015~2022 재배포 패키지를 설치한 뒤
-                                    PC를 재부팅하고 다시 실행해주세요.
-                                </div>
-                            </div>
-                        </article>
-                    </div>
-                </div>
-            </section>
-
-        </main>
-        <div class="bottom-strip">
-
-            <div class="hint"><strong>⌂ </strong> https://mu123.net</div>
+            </a>
         </div>
+
+        <div class="rankings-section">
+            <div class="section-title info-section">
+                <div class="section-title-left">
+                    Information
+                </div>
+            </div>
+            
+            <div class="ranking-list">
+
+            <div class="ranking-item online-players">
+                <div class="ranking-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="ranking-info">
+                    <div class="ranking-title">Online Players</div>
+                    <div class="ranking-subtitle">Currently active and playing</div>
+                </div>
+                <div class="ranking-value online-indicator">234</div>
+            </div>
+            
+            <div class="ranking-grid">
+            
+            <div class="ranking-item top-player">
+                <div class="ranking-icon">
+                    <i class="fas fa-crown"></i>
+                </div>
+                <div class="ranking-info">
+                    <div class="ranking-title">Top Player</div>
+                    <div class="ranking-subtitle">DarkKnight</div>
+                </div>
+            </div>
+
+            <div class="ranking-item top-guild">
+                <div class="ranking-icon">
+                    <i class="fas fa-shield"></i>
+                </div>
+                <div class="ranking-info">
+                    <div class="ranking-title">Top Guild</div>
+                    <div class="ranking-subtitle">Legends</div>
+                </div>
+            </div>
+
+            <div class="ranking-item pvp-champion">
+                <div class="ranking-icon">
+                    <i class="fas fa-crosshairs"></i>
+                </div>
+                <div class="ranking-info">
+                    <div class="ranking-title">PvP</div>
+                    <div class="ranking-subtitle">Assassin</div>
+                </div>
+            </div>
+
+            <div class="ranking-item boss-slayer">
+                <div class="ranking-icon">
+                    <i class="fas fa-skull"></i>
+                </div>
+                <div class="ranking-info">
+                    <div class="ranking-title">Boss Slayer</div>
+                    <div class="ranking-subtitle">BossHunter</div>
+                </div>
+            </div>
+            </div>
+
+            <a href="https://discord.gg/" target="_blank" class="socButton socFacebook">
+                <div class="card-content">
+                    Discord
+                    <span>Free WCoin, giveaways,<br>market &amp; more!</span>
+                </div>
+            </a>
+        </div> 
+        </div> 
+
     </div>
-    <div id="globalTooltip" class="global-tooltip"></div>
-    <script>
-
-
-        const panelData = {
-
-            /* !! ***  title은 왠만하면 2줄 넘지 않게***
-            한 페이지당 제목 2줄 넘는 글 두개 초과 금지*/
-            news: [
-                {
-                    title: "New Event: Blood Castle Extreme",
-                    desc: "더 강력한 몬스터와 보상 구조로 재설계된 기간 한정 이벤트가 열립니다."
-                },
-                {
-                    title: "Server Maintenance",
-                    desc: "정기 점검 시간 동안 런처와 패치 서버만 이용 가능합니다."
-                },
-                {
-                    title: "New Wings Added",
-                    desc: "카오스 조합식과 일부 획득 경로가 새롭게 반영되었습니다."
-                },
-                {
-                    title: "PvP Arena Revamp",
-                    desc: "매칭 구조와 전장 밸런스가 개선되어 보다 공정한 전투가 가능합니다."
-                }
-            ],
-
-            changelogs: [
-                {
-                    title: "Balance Patch v1.3",
-                    desc: "MG, RF 계열 PvP 성능과 주요 스킬 연계가 전반적으로 조정되었습니다."
-                },
-                {
-                    title: "New Anti-Cheat Update",
-                    desc: "비정상 입력 패턴과 매크로 탐지 로직이 강화되었습니다."
-                },
-                {
-                    title: "Chaos Castle Rewards",
-                    desc: "소울 보석 드롭률과 참여 보상이 일부 상향되었습니다."
-                },
-                {
-                    title: "Shop Tooltip Upgrade",
-                    desc: "아이템 툴팁에서 핵심 옵션과 장착 가능 조건을 더 명확히 보여줍니다."
-                }
-            ],
-
-            contents: [
-                {
-                    title: "통합상점",
-                    desc: "홈페이지 내 웹샵으로 간편하게 충전 및 아이템 구입이 가능합니다."
-                },
-                {
-                    title: "서버가이드",
-                    desc: "필독! 네온만의 특화 아이템과 컨텐츠 이용 방법 등 플레이에 필요한 정보를 자세히 제공합니다."
-                },
-                {
-                    title: "백과사전",
-                    desc: "이 아이템은 어디서 얻을 수 있지? 검색으로 간편하게 확인 가능!"
-                }
-            ]
-        };
-
-        /* 미니북 데이터 */
-        const miniBookOrder = [
-            "stat-stone",
-            "trans-jewel",
-            "ragnarok-wing",
-            "pharaoh-gold",
-            "aegis-necklace",
-            "longinus-ring",
-            "neon-set",
-            "devil-square",
-            "boss-chaos",
-            "illusion-temple",
-            "doppelganger",
-            "silent-land",
-            "colosseum"
-        ];
-
-        const miniBookData = {
-            "stat-stone": {
-                badge: "아이템",
-                title: "스탯강화석",
-                tags: ["제작"],
-                sub: "스탯을 누적 성장시키는 제작형 핵심 아이템",
-                tip: "몇개를 사용했는지 인게임에서 바로 확인이 어려우니 갯수를 따로 메모해두는 것을 추천하며, 사용 후 재접속해야 적용됩니다.",
-                sections: [
-                    {
-                        title: "기본 정보",
-                        items: [
-                            "1개 사용 시 100 스탯 획득",
-                            "최대 10,000 스탯까지 누적 가능"
-                        ]
-                    },
-                    {
-                        title: "제작 재료",
-                        items: [
-                            "변반조각 100개+ 펫조각 100개+ 깃발조각 100개"
-                        ]
-                    },
-                    {
-                        title: "제작 위치",
-                        items: [
-                            "엘베란드 NPC 모스에게서 제작"
-                        ]
-                    }
-                ]
-            },
-
-            "trans-jewel": {
-                badge: "아이템",
-                title: "[전승] 초월의 보석",
-                tags: ["상점"],
-                sub: "영템)템플가드 장비를 임페리얼 장비로 업그레이드할 때 사용하는 전승 보석",
-                tip: "",
-                sections: [
-                    {
-                        title: "용도",
-                        items: [
-                            "홈페이지 통합상점에서 구매한 템플가드 아이템을 임페리얼 아이템으로 업그레이드할 때 사용하는 영템전용 아이템",
-                            "조화의보석 옵션을 포함한 기존 옵션이 그대로 유지됨"
-                        ]
-                    },
-                    {
-                        title: "구매 위치",
-                        items: [
-                            "홈페이지 통합상점 - [기타] 카테고리에서 구매 가능"
-
-                        ]
-                    }
-                ]
-            },
-
-            "ragnarok-wing": {
-                badge: "아이템",
-                title: "[신화날개] 라그나로크",
-                tags: ["제작"],
-                sub: "신계의 깃털을 주재료로 성장하는 1성~4성 신화 날개",
-                tip: "단계별 옵션, 재료와 조합방법이 다르니, 서버가이드를 꼭 참고해주세요",
-                sections: [
-                    {
-                        title: "기본 정보",
-                        items: [
-                            "공격과 방어, PVP 모두 뛰어난 성능을 가진 날개로 성장할수록 엄청난 위력을 자랑합니다.",
-                            "4성날개는 옵션에 공격시 스턴공격 확률, PVP데미지흡수+3%가 추가됩니다."
-                        ]
-                    },
-                    {
-                        title: "재료",
-                        items: [
-                            "신계의 깃털 n개",
-                            "강화석 n개",
-                            "조각류 n개(첫 제작 시)"
-                        ]
-                    },
-                    {
-                        title: "신계의 깃털 획득처",
-                        items: [
-                            "[보스]콜로세움 카레인",
-                            "[보스]침묵의 땅 메인보스 및 서브보스"
-                        ]
-                    }
-                ]
-            },
-
-            "pharaoh-gold": {
-                badge: "아이템",
-                title: "파라오의 황금",
-                tags: ["상점"],
-                sub: "+15강이 되면 숨은 옵션이 깨어난다!",
-                tip: "+15 달성 시 숨겨진 옵션이 드러나며, 강화 실패 시 강화 수치는 떨어지지 않습니다. 옵션은 가이드 참고 바랍니다.",
-                sections: [
-                    {
-                        title: "특징",
-                        items: [
-                            "캐릭터를 더욱 강하고 단단하게 만드는 아이템",
-                            "+15 강화 시 숨겨진 옵션 개방",
-                            "네온펫, 변신반지, 깃발, 가디언, 디바인스피릿과 함께 착용 가능"
-                        ]
-                    },
-                    {
-                        title: "획득 방법",
-                        items: [
-                            "홈페이지 통합상점 → 캐쉬상점 → 커스텀 → 파라오의 황금"
-                        ]
-                    },
-                    {
-                        title: "강화 방법",
-                        items: [
-                            "[성장의 보석]으로 직접 강화",
-                            "성공 확률 50%",
-                            "실패 시 성장의 보석만 소모, 강화 수치 유지"
-                        ]
-                    },
-                    {
-                        title: "' 성장의 보석 ' 획득 방법",
-                        items: [
-                            "홈페이지 통합상점 → 캐쉬상점 → [기타]에서 구매 또는",
-                            "보상단지에서 확률 획득"
-                        ]
-                    }
-                ]
-            },
-
-            "aegis-necklace": {
-                badge: "아이템",
-                title: "아이기스의 목걸이",
-                tags: ["제작"],
-                sub: "무엇이든 막아내는 방패! 아이기스 목걸이",
-                tip: "제작 재료와 상세 옵션은 서버가이드의 아이기스의 목걸이 게시글을 참고하는 것이 좋습니다.",
-                sections: [
-                    {
-                        title: "특징",
-                        items: [
-                            "+15 강화 시 숨겨진 옵션 개방"
-                        ]
-                    },
-                    {
-                        title: "획득 방법",
-                        items: [
-                            "제작 - 제작방법은 홈페이지 가이드 참고"
-                        ]
-                    },
-                    {
-                        title: "강화 방법",
-                        items: [
-                            "[성장의 보석]으로 직접 강화",
-                            "성공 확률 50%",
-                            "실패 시 성장의 보석만 소모, 강화 수치 유지"
-                        ]
-                    },
-                    {
-                        title: "' 성장의 보석 '' 획득방법",
-                        items: [
-                            "홈페이지 통합상점 → 캐쉬상점 → [기타]에서 구매 또는",
-                            "보상단지에서 확률 획득"
-                        ]
-                    }
-                ]
-            },
-
-            "longinus-ring": {
-                badge: "아이템",
-                title: "롱기누스의 반지",
-                tags: ["제작", "상점"],
-                sub: "무엇이든 뚫는 창! 착용 시 콤보 사용이 가능해지는 공격형 특수 반지",
-                tip: "환영의사원 입장시 입장전에 착용을 해제하고 입장해야하며, 입장완료 후에 다시 착용해야합니다.",
-                sections: [
-                    {
-                        title: "특징",
-                        items: [
-                            "착용 시 콤보 사용 가능",
-                            "캐릭터 후방에 이펙트 생성"
-                        ]
-                    },
-                    {
-                        title: "획득 방법",
-                        items: [
-                            "제작 또는 홈페이지 통합상점 구매"
-                        ]
-                    },
-                    {
-                        title: "상점 구매 위치",
-                        items: [
-                            "롱기누스의 반지: 통합상점 → 캐쉬상점 → [악세사리]",
-                            "성장의 보석: 캐쉬상점 → [기타] 또는 보상단지에서 획득"
-                        ]
-                    }
-                ]
-            },
-
-            "neon-set": {
-                badge: "아이템",
-                title: "네온펫 / 네온변신반지 / 네온깃발",
-                tags: ["제작"],
-                sub: "사냥, 레벨업, PVP에 필수급으로 쓰이는 네온 서버 근본 장비군",
-                tip: "레어 이상 조합 실패 시 기존 아이템이 소멸하므로 업그레이드 전 재료를 충분히 확보하는 편이 좋습니다.",
-
-                sections: [
-                    {
-                        title: "특징",
-                        items: [
-                            "네온 서버의 핵심 성장 아이템",
-                            "노멀 / 레어 / 유니크 / 레전드 등급으로 구분",
-                            "등급이 올라갈수록 더 높은 옵션 부여",
-                            "환영사원 입장 전 마을(시장포함)에서 변신한 상태로 입장하면 변신반지를 착용하고도 환영사원 입장이 가능합니다.",
-                            "레전드 반지는 그냥 입장 가능"
-
-                        ]
-                    },
-                    {
-                        title: "획득 방법",
-                        items: [
-                            "각 조각과 네온강화석을 모아 제작",
-                            "엘베란드 모스 NPC에게서 조합 및 업그레이드"
-                        ]
-                    },
-                    {
-                        title: "주의사항",
-                        items: [
-                            "노멀은 100% 제작",
-                            "레어 / 유니크 / 레전드 조합 실패 시 기존 아이템 소멸"
-                        ]
-                    }
-                ]
-            },
-
-            "devil-square": {
-                badge: "컨텐츠",
-                title: "악마의광장",
-                sub: "조각, 신계의 깃털, 네온강화석 파밍에 좋은 리뉴얼 사냥 공장!",
-                tip: "인기컨텐츠로 서두르지 않으면 정원초과로 입장 못할 가능성이 큽니다ㅠ.ㅠ",
-                sections: [
-                    {
-                        title: "시작 시간",
-                        items: [
-                            "오후 5시 시작/ 5분전 입장 시작",
-                            "이 컨텐츠는 1인 1캐릭 초과 입장시 제재 대상입니다."
-
-                        ]
-                    },
-                    {
-                        title: "입장 방법",
-                        items: [
-                            "인게임 X샵(x키) - [데빌스퀘어 자유입장권] 지침",
-                            "컨트롤(Ctrl)+T 입장",
-                            "한 타임당 최대 10명 입장 가능",
-
-                        ]
-                    },
-                    {
-                        title: "주요 드랍",
-                        items: [
-                            "네온강화석",
-                            "변신반지조각 / 펫조각 / 깃발조각",
-                            "신계의 깃털",
-                            "고블린포인트, 루드, 각종 보석"
-                        ]
-                    }
-                ]
-            },
-
-            "boss-chaos": {
-                badge: "컨텐츠",
-                title: "다함께보스전 / 카오스캐슬",
-                sub: "반복형 핵심 인게임 컨텐츠",
-                tip: "[다함께보스전]은 변신반지 조각을 모으기가 좋습니다!",
-                sections: [
-                    {
-                        title: "시작 시간",
-                        items: [
-                            "다함께보스전: 짝수시간마다, 5분 전부터 입장",
-                            "카오스캐슬: 홀수시간마다, 5분 전부터 입장"
-                        ]
-                    },
-                    {
-                        title: "입장 방법",
-                        items: [
-                            "인게임 X샵(X키) → 입장권 카테고리에서 입장권 구매 후",
-                            "컨트롤(Ctrl)+T눌러서 입장"
-                        ]
-                    },
-                    {
-                        title: "주요 보상",
-                        items: [
-                            "[다함께보스전] 변신반지조각, 네온강화석, 고포, 루드, 보석 등",
-                            " + 데미지 구간별 보너스 변신반지조각 습득가능",
-                            "[카오스캐슬] 필드드랍: 펫조각, 깃발조각, 네온강화석, 고포, 루드, 보석 등",
-                            " + 카오스캐슬 1등 보상(각종조각, 강화석 등 랜덤보상)은 그레모리케이스(K) 지급"
-                        ]
-                    }
-                ]
-            },
-
-            "illusion-temple": {
-                badge: "컨텐츠",
-                title: "환영의사원",
-                sub: "랜덤 팀 매칭으로 진행되는 점령형 팀전 PVP 컨텐츠.  ",
-                tip: "제한 인원이 있어 늦으면 정원 초과로 입장하지 못할 수 있으니 미리 준비하는 편이 좋습니다.",
-                sections: [
-                    {
-                        title: "보상",
-                        items: [
-
-                            "보상단지: 승리팀 전원에게 지급"
-                        ]
-                    },
-                    {
-                        title: "시작 시간",
-                        items: [
-                            "매 홀수시간 30분/25분부터 입장 가능 ",
-                            "이 컨텐츠는 1인 1캐릭 초과 입장시 제재 대상입니다."
-
-                        ]
-                    },
-                    {
-                        title: "입장 방법",
-                        items: [
-                            "X샵에서 [피의두루마리] 구매 ",
-                            "컨트롤(Ctrl) + T 입장 후 → NPC 클릭 후 입장",
-                            "입장 후 팀원 랜덤 매칭"
-                        ]
-                    }
-                ]
-            },
-
-            "doppelganger": {
-                badge: "컨텐츠",
-                title: "도플갱어",
-                sub: "두둑한 보상! 파티 생존과 최종 대결이 이어지는 경쟁형 파티 컨텐츠",
-                tip: "몬스터 드랍과 승리 보상을 동시에 노릴 수 있어 파티 전력이 좋을수록 효율이 크게 올라갑니다.",
-                sections: [
-                    {
-                        title: "진행 방식",
-                        items: [
-                            "각 파티가 도플갱어 몬스터와 전투",
-                            "생존 파티끼리 최종 전투 후 살아남아야 승리"
-                        ]
-                    },
-                    {
-                        title: "시작 시간",
-                        items: [
-                            "오후 8시 시작/ 5분 전부터 입장",
-                            "이 컨텐츠는 1인 1캐릭 초과 입장시 제재 대상입니다."
-                        ]
-                    },
-
-                    {
-                        title: "입장 방법",
-                        items: [
-                            "최소인원: 3인파티/ 3인이상 파티가 맺어져 있어야 입장 가능합니다.",
-                            "파티원들이 모두 대기실 입장후(컨트롤+T) 파티장or 파티원이 입장권(x샵-차원의마경) 지침 상태로 > NPC눌러서 입장."
-                        ]
-                    },
-                    {
-                        title: "보상",
-                        items: [
-                            "몬스터 드랍: 조각, 강화석, 고블린포인트, 루드, 보석 등 ",
-                            "최종 승리팀에게 보상단지 총 10개 지급"
-                        ]
-                    }
-                ]
-            },
-
-            "silent-land": {
-                badge: "필드보스",
-                title: "침묵의 땅 브로카이스",
-                sub: "브로카이스와 서브보스를 처치해 신계 재료를 얻는 월드보스 레이드",
-                tip: "신화날개 핵심 재료인 신계의 깃털 수급처라 성장 단계에서 중요도가 높습니다.",
-                sections: [
-                    {
-                        title: "기본 정보",
-                        items: [
-                            "하루 2회 등장하는 필드 보스 컨텐츠",
-                            "메인보스 브로카이스 + 서브보스 출현"
-                        ]
-                    },
-                    {
-                        title: "조건 / 시간",
-                        items: [
-                            "레벨 제한 1700",
-                            "매일 오후 7시 / 오후 9시",
-                            "제한 시간 30분"
-                        ]
-                    },
-                    {
-                        title: "주요 보상",
-                        items: [
-                            "신계의 깃털",
-                            "신성한 금화",
-                            "보상단지"
-                        ]
-                    }
-                ]
-            },
-
-            "colosseum": {
-                badge: "필드보스",
-                title: "콜로세움 카레인",
-                sub: "신계의 깃털과 신성한 금화를 노릴 수 있는 일일 레이드 보스",
-                tip: "침묵의 땅과 함께 신화날개 재료 파밍 루트로 묶으면 좋습니다.",
-                sections: [
-                    {
-                        title: "조건 / 시간",
-                        items: [
-                            "레벨 제한 1650",
-                            "매일 오후 6시 / 오후 10시",
-                            "제한 시간 30분"
-                        ]
-                    },
-                    {
-                        title: "주요 보상",
-                        items: [
-                            "신계의 깃털",
-                            "신성한 금화",
-                            "보상단지"
-                        ]
-                    }
-                ]
-            }
-        };
-
-
-        function chunkArray(array, size) {
-            const result = [];
-
-            for (let i = 0; i < array.length; i += size) {
-                result.push(array.slice(i, i + size));
-            }
-
-            return result;
-        }
-
-        const tooltip = document.getElementById("globalTooltip");
-
-        function showTooltip(text, mouseX, mouseY) {
-            if (!tooltip || !text) return;
-
-            tooltip.textContent = text;
-            tooltip.classList.add("show");
-
-            const offset = 14;
-            const tooltipRect = tooltip.getBoundingClientRect();
-
-            let left = mouseX + offset;
-            let top = mouseY + offset;
-
-            const maxLeft = window.innerWidth - tooltipRect.width - 12;
-            const maxTop = window.innerHeight - tooltipRect.height - 12;
-
-            if (left > maxLeft) {
-                left = mouseX - tooltipRect.width - offset;
-            }
-
-            if (top > maxTop) {
-                top = mouseY - tooltipRect.height - offset;
-            }
-
-            if (left < 12) left = 12;
-            if (top < 12) top = 12;
-
-            tooltip.style.left = left + "px";
-            tooltip.style.top = top + "px";
-        }
-
-        function hideTooltip() {
-            if (!tooltip) return;
-            tooltip.classList.remove("show");
-        }
-
-        function renderPanel(panelElement, pageIndex, animate = true) {
-            const panelKey = panelElement.dataset.panel;
-            const list = panelElement.querySelector(".list");
-            const indicator = panelElement.querySelector(".page-indicator");
-            const pages = chunkArray(panelData[panelKey], 3);
-
-            if (!pages || !pages[pageIndex]) {
-                return;
-            }
-
-            const currentItems = pages[pageIndex];
-
-            const updateContent = () => {
-                list.innerHTML = currentItems.map(item => `
-                <div class="item">
-                    <h4>${item.title}</h4>
-                    <p class="desc-text">${item.desc}</p>
-                </div>
-            `).join("");
-
-                const descTexts = list.querySelectorAll(".desc-text");
-
-                descTexts.forEach((p) => {
-                    p.classList.remove("is-truncated");
-
-                    const isClamped = p.scrollHeight > p.clientHeight + 1;
-
-                    if (isClamped) {
-                        p.classList.add("is-truncated");
-
-                        p.addEventListener("mouseenter", (e) => {
-                            showTooltip(p.textContent.trim(), e.clientX, e.clientY);
-                        });
-
-                        p.addEventListener("mousemove", (e) => {
-                            showTooltip(p.textContent.trim(), e.clientX, e.clientY);
-                        });
-
-                        p.addEventListener("mouseleave", () => {
-                            hideTooltip();
-                        });
-                    }
-                });
-
-                if (indicator) {
-                    indicator.textContent = `${pageIndex + 1} / ${pages.length}`;
-                }
-
-                panelElement.dataset.currentPage = pageIndex;
-            };
-
-            if (!animate) {
-                updateContent();
-                return;
-            }
-
-            list.classList.add("is-switching");
-
-            setTimeout(() => {
-                updateContent();
-
-                requestAnimationFrame(() => {
-                    list.classList.remove("is-switching");
-                });
-            }, 180);
-        }
-
-        document.querySelectorAll("#page-home .panel[data-panel]").forEach(panel => {
-            panel.dataset.currentPage = "0";
-
-            const prevBtn = panel.querySelector(".prev-btn");
-            const nextBtn = panel.querySelector(".next-btn");
-
-            if (prevBtn) {
-                prevBtn.addEventListener("click", () => {
-                    const key = panel.dataset.panel;
-                    const total = chunkArray(panelData[key], 3).length;
-                    let current = parseInt(panel.dataset.currentPage || "0", 10);
-
-                    current = (current - 1 + total) % total;
-                    renderPanel(panel, current, true);
-                });
-            }
-
-            if (nextBtn) {
-                nextBtn.addEventListener("click", () => {
-                    const key = panel.dataset.panel;
-                    const total = chunkArray(panelData[key], 3).length;
-                    let current = parseInt(panel.dataset.currentPage || "0", 10);
-
-                    current = (current + 1) % total;
-                    renderPanel(panel, current, true);
-                });
-            }
-
-            renderPanel(panel, 0, false);
-        });
-
-        /* 사이드바 */
-        const navButtons = document.querySelectorAll(".nav-btn[data-page]");
-        const pages = document.querySelectorAll(".page");
-        const launcher = document.querySelector(".launcher");
-        const bottomStrip = document.querySelector(".bottom-strip");
-
-        navButtons.forEach((btn) => {
-            btn.addEventListener("click", () => {
-                const target = btn.dataset.page;
-
-                navButtons.forEach((b) => b.classList.remove("active"));
-                btn.classList.add("active");
-
-                pages.forEach((page) => page.classList.remove("active"));
-
-                const targetPage = document.getElementById("page-" + target);
-                if (targetPage) {
-                    targetPage.classList.add("active");
-                }
-
-                launcher.classList.remove("schedule-mode", "minibook-mode", "faq-mode");
-                document.body.classList.remove("schedule-active", "minibook-active");
-
-                if (target === "schedule") {
-                    bottomStrip.style.display = "none";
-                    launcher.classList.add("schedule-mode");
-                    document.body.classList.add("schedule-active");
-                } else if (target === "minibook") {
-                    bottomStrip.style.display = "none";
-                    launcher.classList.add("minibook-mode");
-                    document.body.classList.add("minibook-active");
-                } else if (target === "faq") {
-                    bottomStrip.style.display = "none";
-                    launcher.classList.add("faq-mode");
-                } else {
-                    bottomStrip.style.display = "";
-                }
-            });
-        });
-
-
-
-        /* 미니북 사이드바 페이지 전환*/
-        let currentMiniBookIndex = 0;
-
-        function updateMiniBookIndicator() {
-            const indicator = document.getElementById("bookPageIndicator");
-            if (!indicator) return;
-            indicator.textContent = `${currentMiniBookIndex + 1} / ${miniBookOrder.length}`;
-        }
-
-        function syncMiniBookMenu(key) {
-            const buttons = document.querySelectorAll(".book-menu");
-            buttons.forEach((btn) => {
-                btn.classList.toggle("active", btn.dataset.book === key);
-            });
-        }
-
-        function renderMiniBookByKey(key) {
-            const data = miniBookData[key];
-            if (!data) return;
-
-            const badgeEl = document.getElementById("bookBadge");
-            const titleEl = document.getElementById("bookTitle");
-            const titleTagsEl = document.getElementById("bookTitleTags");
-            const subEl = document.getElementById("bookSub");
-            const bodyEl = document.getElementById("bookBody");
-            const tipEl = document.getElementById("bookTip");
-
-            if (!badgeEl || !titleEl || !subEl || !bodyEl || !tipEl) return;
-
-            badgeEl.textContent = data.badge;
-            badgeEl.classList.remove("item", "content", "boss");
-
-            if (data.badge === "아이템") {
-                badgeEl.classList.add("item");
-            } else if (data.badge === "컨텐츠") {
-                badgeEl.classList.add("content");
-            } else if (data.badge === "필드보스") {
-                badgeEl.classList.add("boss");
-            }
-
-            titleEl.textContent = data.title;
-
-            if (titleTagsEl) {
-                const tags = Array.isArray(data.tags) ? data.tags : [];
-
-                titleTagsEl.innerHTML = tags.map(tag => {
-                    const cls = tag === "제작" ? "make" : "shop";
-                    return `<span class="book-title-tag ${cls}">${tag}</span>`;
-                }).join("");
-            }
-
-            subEl.textContent = data.sub;
-            tipEl.textContent = data.tip;
-
-            bodyEl.innerHTML = data.sections.map(section => `
-                <div class="book-block">
-                    <div class="book-block-title">${section.title}</div>
-                    <ul class="book-list">
-                        ${section.items.map(item => `<li>${item}</li>`).join("")}
-                    </ul>
-                </div>
-            `).join("");
-
-            syncMiniBookMenu(key);
-            updateMiniBookIndicator();
-        }
-
-        function renderMiniBookByIndex(index) {
-            if (index < 0) {
-                currentMiniBookIndex = miniBookOrder.length - 1;
-            } else if (index >= miniBookOrder.length) {
-                currentMiniBookIndex = 0;
-            } else {
-                currentMiniBookIndex = index;
-            }
-
-            const key = miniBookOrder[currentMiniBookIndex];
-            renderMiniBookByKey(key);
-        }
-
-        document.querySelectorAll(".book-menu").forEach((button) => {
-            button.addEventListener("click", () => {
-                const key = button.dataset.book;
-                const index = miniBookOrder.indexOf(key);
-
-                if (index !== -1) {
-                    currentMiniBookIndex = index;
-                }
-
-                renderMiniBookByKey(key);
-            });
-        });
-
-        const bookPrevBtn = document.getElementById("bookPrevBtn");
-        const bookNextBtn = document.getElementById("bookNextBtn");
-
-        if (bookPrevBtn) {
-            bookPrevBtn.addEventListener("click", () => {
-                renderMiniBookByIndex(currentMiniBookIndex - 1);
-            });
-        }
-
-        if (bookNextBtn) {
-            bookNextBtn.addEventListener("click", () => {
-                renderMiniBookByIndex(currentMiniBookIndex + 1);
-            });
-        }
-
-        renderMiniBookByIndex(0);
-
-        /* FAQ accordion */
-        const faqItems = document.querySelectorAll(".faq-item");
-
-        faqItems.forEach((item) => {
-            const question = item.querySelector(".faq-question");
-            const answer = item.querySelector(".faq-answer");
-
-            if (!question || !answer) return;
-
-            question.addEventListener("click", () => {
-                const isOpen = item.classList.contains("open");
-
-                faqItems.forEach((otherItem) => {
-                    otherItem.classList.remove("open");
-                    const otherAnswer = otherItem.querySelector(".faq-answer");
-                    if (otherAnswer) {
-                        otherAnswer.style.maxHeight = "0px";
-                    }
-                });
-
-                if (!isOpen) {
-                    item.classList.add("open");
-                    answer.style.maxHeight = answer.scrollHeight + "px";
-                }
-            });
-        });
-    </script>
 </body>
-
 </html>
