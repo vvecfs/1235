@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sidebar Menu</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"
+  />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: url("neonbg.png");
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding: 24px;
+      font-family: Tahoma;
+    }
+
+    .sidebar {
+	  margin-top: 110px;
+      width: 190px;
+      background: none;
+      border-radius: 6px;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    }
+
+    .menu {
+      list-style: none;
+    }
+
+    .menu li {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .menu li:last-child {
+      border-bottom: none;
+    }
+
+    .menu a {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 14px;
+      color: #bfc5d1;
+      text-decoration: none;
+      font-size: 14px;
+	  font-family: Tahoma;
+	  font-weight: bold;
+      transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .menu a:hover {
+      background: #232833;
+      color: #ffffff;
+    }
+
+    .menu i {
+      width: 16px;
+      text-align: center;
+      color: #8f98a8;
+      font-size: 13px;
+    }
+
+    .menu a:hover i {
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body>
+  <nav class="sidebar">
+    <ul class="menu">
+      <li><a href="https://mu123.net/mu_webshop/" target="_blank"><i class="fa-solid fa-basket-shopping"></i><span>　통합상점</span></a></li>
+      <li><a href="https://mu123.net/promo/login.php" target="_blank"><i class="fa-solid fa-bullhorn"></i><span>　홍보이벤트</span></a></li>
+      <li><a href="https://drop.mu123.net/" target="_blank"><i class="fa-solid fa-book"></i><span>　백과사전</span></a></li>
+      <li><a href="https://mu123.net/sadari/" target="_blank"><i class="fa-solid fa-code-branch"></i><span>　사다리게임</span></a></li>
+      <li><a href="https://www.muonline.co.kr/gameinfo/guides/1387/1390" target="_blank"><i class="fa-regular fa-lightbulb"></i><span>　초보자가이드</span></a></li>
+      <li><a href="https://www.muonline.co.kr/gameinfo/guides/docs" target="_blank"><i class="fa-solid fa-magnifying-glass"></i><span>　지식사전</span></a></li>
+      <li><a href="https://mu123.net/bbs/board.php?bo_table=server" target="_blank"><i class="fa-regular fa-address-card"></i><span>　네온가이드</span></a></li>
+    </ul>
+  </nav>
+</body>
+</html>
