@@ -1,0 +1,12 @@
+<?php
+$config = json_decode(file_get_contents("config.json"), true);
+
+$url = $config["url"] ?? "";
+
+if (!$url) {
+    die("다운로드 URL 없음");
+}
+
+// 리다이렉트 방식
+header("Location: " . $url);
+exit;
