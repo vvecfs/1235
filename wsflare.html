@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>WSFlare | Anycast DDoS Protect</title>
+  <meta name="description" content="Cloudflare Spectrum 기반 500+Tbps DDoS 공격 즉시 완화" />
+  <link rel="icon" href="assets/ws-logo.png" />
+  <style>
+    :root{
+      --bg:#050506;
+      --panel:rgba(255,255,255,.07);
+      --panel2:rgba(255,132,0,.09);
+      --line:rgba(255,255,255,.13);
+      --text:#f7f7fb;
+      --muted:#a8acb8;
+      --orange:#ff8a00;
+      --orange2:#ffb340;
+      --dark-orange:#b84900;
+      --blue:#7ea7ff;
+      --shadow:0 30px 90px rgba(0,0,0,.55);
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family: Inter, Pretendard, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--text);
+      background:var(--bg);
+      overflow-x:hidden;
+    }
+    body::before{
+      content:"";
+      position:fixed; inset:-20%; z-index:-3;
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,138,0,.35), transparent 28%),
+        radial-gradient(circle at 80% 10%, rgba(255,183,64,.22), transparent 24%),
+        radial-gradient(circle at 50% 90%, rgba(126,167,255,.14), transparent 30%),
+        linear-gradient(135deg,#030304,#0c0704 45%,#030303);
+      animation:aurora 13s ease-in-out infinite alternate;
+    }
+    body::after{
+      content:"";
+      position:fixed; inset:0; z-index:-2;
+      background-image:linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px);
+      background-size:70px 70px;
+      mask-image:radial-gradient(circle at center, black, transparent 78%);
+      opacity:.38;
+    }
+    @keyframes aurora{to{transform:translate3d(-2%,2%,0) scale(1.05); filter:hue-rotate(8deg)}}
+    a{color:inherit;text-decoration:none}
+    .wrap{width:min(1180px, calc(100% - 40px)); margin:0 auto}
+    .nav{
+      position:sticky; top:16px; z-index:10;
+      width:min(1180px, calc(100% - 40px)); margin:16px auto 0;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:12px 16px;
+      border:1px solid var(--line); border-radius:22px;
+      background:rgba(6,6,8,.58); backdrop-filter:blur(18px);
+      box-shadow:0 12px 45px rgba(0,0,0,.35);
+    }
+    .brand{display:flex; align-items:center; gap:12px; font-weight:900; letter-spacing:.2px}
+    .brand img{width:42px;height:42px;border-radius:13px;object-fit:cover;box-shadow:0 0 24px rgba(255,138,0,.35)}
+    .brand span{font-size:18px}
+    .navlinks{display:flex; gap:22px; color:var(--muted); font-size:14px}
+    .navlinks a:hover{color:#fff}
+    .nav .btn{padding:10px 15px;border-radius:999px;background:linear-gradient(135deg,var(--orange),var(--orange2));color:#150900;font-weight:900;box-shadow:0 10px 30px rgba(255,138,0,.25)}
+    .hero{position:relative; padding:96px 0 70px; min-height:760px; display:grid; align-items:center}
+    .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center}
+    .badge{display:inline-flex;align-items:center;gap:9px;padding:9px 13px;border:1px solid rgba(255,138,0,.28);background:rgba(255,138,0,.09);border-radius:999px;color:#ffd7a4;font-size:13px;font-weight:800}
+    .dot{width:8px;height:8px;border-radius:50%;background:#3cff9a;box-shadow:0 0 16px #3cff9a}
+    h1{font-size:clamp(46px,7vw,84px);line-height:.96;margin:22px 0 20px;letter-spacing:-4px}
+    .grad{background:linear-gradient(135deg,#fff 5%,#ffd3a0 45%,#ff8500 80%);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .lead{font-size:18px;line-height:1.75;color:#c4c7d0;max-width:650px;margin:0 0 30px}
+    .actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:34px}
+    .primary,.ghost{display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:0 22px;border-radius:16px;font-weight:900}
+    .primary{background:linear-gradient(135deg,var(--orange),#ffd36a);color:#150900;box-shadow:0 20px 50px rgba(255,138,0,.28)}
+    .ghost{border:1px solid var(--line);background:rgba(255,255,255,.06);color:#fff;backdrop-filter:blur(14px)}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:610px}
+    .stat{padding:18px;border:1px solid var(--line);border-radius:20px;background:rgba(255,255,255,.055);backdrop-filter:blur(12px)}
+    .stat strong{display:block;font-size:26px}.stat span{font-size:13px;color:var(--muted)}
+    .logo-stage{position:relative;min-height:520px;display:grid;place-items:center}
+    .halo{position:absolute;width:470px;height:470px;border-radius:50%;background:radial-gradient(circle,rgba(255,138,0,.25),transparent 65%);filter:blur(10px);animation:pulse 3s ease-in-out infinite alternate}
+    @keyframes pulse{to{transform:scale(1.08);opacity:.72}}
+    .logo-card{position:relative;width:min(510px,92vw);padding:24px;border-radius:38px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(180deg,rgba(255,255,255,.09),rgba(255,255,255,.035));box-shadow:var(--shadow);backdrop-filter:blur(20px);overflow:hidden}
+    .logo-card::before{content:"";position:absolute;inset:-2px;background:linear-gradient(120deg,transparent,rgba(255,138,0,.45),transparent);opacity:.45;transform:translateX(-65%);animation:shine 4.8s ease-in-out infinite}
+    @keyframes shine{55%,100%{transform:translateX(65%)}}
+    .logo-card img{position:relative;width:100%;border-radius:28px;display:block;box-shadow:inset 0 0 0 1px rgba(255,255,255,.12)}
+    section{padding:72px 0}.section-head{display:flex;justify-content:space-between;gap:20px;align-items:end;margin-bottom:26px}.section-head h2{font-size:clamp(32px,4vw,52px);line-height:1;margin:0;letter-spacing:-2px}.section-head p{max-width:470px;color:var(--muted);line-height:1.7;margin:0}
+    .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.card{position:relative;min-height:230px;padding:26px;border:1px solid var(--line);border-radius:28px;background:linear-gradient(180deg,var(--panel),rgba(255,255,255,.035));backdrop-filter:blur(16px);box-shadow:0 18px 60px rgba(0,0,0,.25);overflow:hidden}.card::after{content:"";position:absolute;right:-50px;top:-70px;width:170px;height:170px;background:radial-gradient(circle,rgba(255,138,0,.25),transparent 68%)}.icon{width:48px;height:48px;border-radius:16px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(255,138,0,.25),rgba(255,255,255,.08));border:1px solid rgba(255,255,255,.12);font-size:24px}.card h3{font-size:22px;margin:22px 0 10px}.card p{color:#b9bdc9;line-height:1.7;margin:0;font-size:15px}
+    .panel{display:grid;grid-template-columns:.9fr 1.1fr;gap:20px;align-items:stretch}.diagram,.list{border:1px solid var(--line);border-radius:32px;background:rgba(255,255,255,.055);backdrop-filter:blur(18px);box-shadow:var(--shadow);padding:30px}.node{display:flex;align-items:center;gap:14px;padding:16px 18px;margin:14px 0;border-radius:18px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}.node b{color:#fff}.node span{color:var(--muted);font-size:13px}.bar{height:42px;border-radius:14px;background:linear-gradient(90deg,rgba(255,138,0,.2),rgba(255,138,0,.7),rgba(255,211,106,.85));margin:18px 0;box-shadow:0 0 35px rgba(255,138,0,.22)}.list h2{font-size:36px;margin:0 0 18px}.check{display:flex;gap:12px;padding:16px 0;border-bottom:1px solid rgba(255,255,255,.09);color:#cbd0dc}.check:last-child{border-bottom:0}.check i{font-style:normal;color:#ffbd68;font-weight:900}
+    .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.price{padding:28px;border-radius:30px;border:1px solid var(--line);background:rgba(255,255,255,.055);backdrop-filter:blur(18px)}.price.hot{background:linear-gradient(180deg,rgba(255,138,0,.18),rgba(255,255,255,.055));border-color:rgba(255,138,0,.38);transform:translateY(-10px)}.price h3{margin:0 0 10px;font-size:24px}.money{font-size:42px;font-weight:950;margin:14px 0}.money small{font-size:15px;color:var(--muted)}.price ul{padding:0;margin:18px 0 24px;list-style:none;color:#c6cad5;line-height:2}.price li::before{content:"✓ ";color:#ffb340;font-weight:900}.price a{display:flex;justify-content:center;align-items:center;height:48px;border-radius:15px;background:rgba(255,255,255,.08);border:1px solid var(--line);font-weight:900}.price.hot a{background:linear-gradient(135deg,var(--orange),#ffd36a);color:#130800;border:0}
+    .cta{margin:70px 0 34px;padding:44px;border-radius:36px;border:1px solid rgba(255,138,0,.3);background:radial-gradient(circle at 20% 0,rgba(255,138,0,.28),transparent 40%),rgba(255,255,255,.06);box-shadow:var(--shadow);display:flex;align-items:center;justify-content:space-between;gap:20px}.cta h2{font-size:42px;margin:0 0 8px}.cta p{margin:0;color:var(--muted)}
+    footer{padding:34px 0 50px;color:#777d8c}.foot{display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(255,255,255,.1);padding-top:24px}.mini{display:flex;align-items:center;gap:10px}.mini img{width:30px;height:30px;border-radius:9px;object-fit:cover}
+    @media(max-width:920px){.hero-grid,.panel{grid-template-columns:1fr}.cards,.pricing,.stats{grid-template-columns:1fr}.navlinks{display:none}.logo-stage{min-height:auto}.section-head,.cta,.foot{display:block}.cta .primary{margin-top:20px}.price.hot{transform:none}h1{letter-spacing:-2px}.hero{padding-top:70px}}
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a class="brand" href="#"><img src="assets/ws-logo.png" alt="WS Shield Logo"><span>WSFlare</span></a>
+    <div class="navlinks"><a href="#features">기능</a><a href="#network">자주묻는질문</a><a href="#plans">요금제</a><a href="#contact">네트워크</a></div>
+    <a class="btn" href="https://center.wsflare.com/login">로그인</a>
+  </nav>
+
+  <main>
+    <header class="hero wrap">
+      <div class="hero-grid">
+        <div>
+          <div class="badge"><span class="dot"></span> Cloudflare Spectrum 기반 500Tbps+ 공격방어 / 330+ Global Anycast / Argo Smart Routing</div>
+          <h1>TCP & UDP<br><span class="grad">무제한 DDoS 방어 및 트래픽 가속</span></h1>
+          <p class="lead">전 세계 335곳의 네트워크에 구축된 WSFlare는 복잡하고 규모가 큰 공격으로부터 애플리케이션을 보호하며 빠르고 일관된 '실시간' 최종 사용자 경험을 제공합니다.</p>
+          <div class="actions">
+            <a class="primary" href="#plans">플랜선택하기</a>
+            <a class="ghost" href="#network">자주묻는질문</a>
+          </div>
+          <div class="stats">
+            <div class="stat"><strong>330+</strong><span>Anycast POP</span></div>
+            <div class="stat"><strong>500+Tbps</strong><span>Clouflare Spectrum</span></div>
+            <div class="stat"><strong>24/7</strong><span>1:1 Setting</span></div>
+          </div>
+        </div>
+        <div class="logo-stage">
+          <div class="halo"></div>
+          <div class="logo-card"><img src="assets/ws-logo.png" alt="WS Cloudflare Inspired Logo"></div>
+        </div>
+      </div>
+    </header>
+
+    <section id="features" class="wrap">
+      <div class="section-head">
+        <h2>보안은 막는 기술이 아니라<br>정상적인 흐름을 유지하는 기술입니다.</h2>
+        <p>저희는 공격자와 귀사의 출발지 사이에 위치합니다. Spectrum은 330개 이상의 PoP에서 L4 플러드 공격을 차단하고, Argo는 정상적인 트래픽을 가장 빠른 경로로 되돌려 보냅니다.</p>
+      </div>
+      <div class="cards">
+        <article class="card"><div class="icon">☁</div><h3>Load balancing</h3><p>부하 분산을 통해 모든 활성 TCP 연결과 UDP 트래픽을 정상 서버로 자동 장애 조치하여 서비스 가동 시간을 증가시킬 수 있습니다.</p></article>
+        <article class="card"><div class="icon">⚡</div><h3>Low Latency Proxy</h3><p>WSFlare는 Smart Routing을 통합하여 ‘최선의 노력’을 하는 인터넷보다 TCP 트래픽을 더 빨리 전송합니다.</p></article>
+        <article class="card"><div class="icon">🛡</div><h3>DDoS Protection</h3><p>네트워크 완화 용량이 500 Tbps인 WSFlare는 서버에 최대 규모의 DDoS 공격이 도달하기 전에 이를 완화합니다.</p></article>
+      </div>
+    </section>
+
+    <section id="network" class="wrap">
+      <div class="panel">
+        <div class="diagram">
+          <div class="node"><div class="icon">🌐</div><div><b>Spectrum L4 mitigation</b><br><span>TCP / UDP — any port</span></div></div>
+          <div class="bar"></div>
+          <div class="node"><div class="icon">☁</div><div><b>Anycast everywhere</b><br><span>330+ Anycast PoPs</span></div></div>
+          <div class="bar"></div>
+          <div class="node"><div class="icon">🖥</div><div><b>Argo Smart Routing</b><br><span>Avg latency drop ~35%</span></div></div>
+        </div>
+        <div class="list">
+          <h2>Q&A 자주묻는질문</h2>
+          <div class="check"><i>Q .</i><div><b>WSFlare가 방어에 실패하면 어떡하나요?</b><br><span>A . 고객님의 과실이 아닌 경우 (ex. 원본 아이피 노출) 즉시 100% 환불 진행합니다.</span></div></div>
+          <div class="check"><i>Q .</i><div><b>제 서버를 공개하고 싶지 않은데, 원격 접속해서 세팅하시나요?</b><br><span>A . 아니요, 구매 후 유저패널에서 직접 보호 할 IP를 입력/수정하시면됩니다.</span></div></div>
+          <div class="check"><i>Q .</i><div><b>도메인으로 지급되는 서비스인가요? 저는 IPv4가 필요합니다.</b><br><span>A . 당연히 IPv4가 지급됩니다. </span></div></div>
+          <div class="check"><i>Q .</i><div><b>방어 시스템을 도입하면 속도가 느려지지 않나요?</b><br><span>A. Anycast+Argo가 기본제공됩니다. 더빠른 연결을위해 구매하시는 고객도 있습니다.</span></div></div>
+          <div class="check"><i>Q .</i><div><b>프록시 프로토콜을 지원하나요?</b><br><span>A. 적용을 원하시는 경우 v1과 v2을 지원합니다.</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="plans" class="wrap">
+      <div class="section-head">
+        <h2>요금제</h2>
+        <p>모든 요금제에는 Cloudflare Spectrum, 330개 이상의 PoP를 갖춘 Anycast 네트워크, Argo 스마트 라우팅 및 유저 컨트롤 패널이 포함되어 있습니다.</p>
+      </div>
+      <div class="pricing">
+        <div class="price"><h3>Starter</h3><div class="money">₩49,000 <small>/30일</small></div><ul><li>1개의 TCP/UDP 포트</li><li>1개의 백엔드</li><li>296Tbit/s 이상의 클라우드플레어 네트워크</li><li>전 세계 330개 이상의 Anycast PoP</li><li>L4 DDoS 완화(Spectrum)</li><li>Argo 스마트 라우팅</li><li>100% 가동 시간 SLA</li><li>유저 컨트롤 패널</li></ul></div>
+        <div class="price hot"><h3>Business</h3><div class="money">₩149,000 <small>/30일</small></div><ul><li>4개의 TCP/UDP 포트</li><li>1개의 백엔드</li><li>296Tbit/s 이상의 클라우드플레어 네트워크</li><li>전 세계 330개 이상의 Anycast PoP</li><li>L4 DDoS 완화(Spectrum)</li><li>Argo 스마트 라우팅</li><li>100% 가동 시간 SLA</li><li>유저 컨트롤 패널</li></ul></div>
+        <div class="price"><h3>Enterprise</h3><div class="money">₩900,000 <small>/30일</small></div><ul><li>최초구매시 세팅비용+₩300,000</li><li>전용 애니캐스트 IP</li><li>무제한 앱 및 백엔드</li><li>296Tbit/s 이상의 클라우드플레어 네트워크</li><li>전 세계 330개 이상의 Anycast PoP</li><li>L4 DDoS 완화(Spectrum)</li><li>Argo 스마트 라우팅</li><li>248Tbps+ 버스트 용량</li><li>100% 가동 시간 SLA</li><li>유저 컨트롤 패널</li></ul></div>
+      </div>
+    </section>
+
+    <section id="contact" class="wrap">
+      <div class="cta">
+        <div><h2>현재 WSFlare 네트워크 상태를 확인하세요.</h2><p>Cloudflare SpeedTest 기반</p></div>
+        <a class="primary" href="./stat">네트워크 모니터링</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap">
+    <div class="foot">
+      <div class="mini"><img src="assets/ws-logo.png" alt="WS"><b>WSFlare</b></div>
+      <div>© 2026 WSFlare. All rights reserved.</div>
+    </div>
+  </footer>
+</body>
+</html>
